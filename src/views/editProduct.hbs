@@ -1,0 +1,369 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Thêm / Chỉnh Sửa Sản Phẩm
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a href="/">
+          <i class="fa fa-dashboard"></i> Trang Bán Hàng</a>
+      </li>
+      <li class="active">Thêm / Chỉnh Sửa Sản Phẩm</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <!-- general form elements -->
+        <div class="box box-primary" id="form-display">
+          <div class="box-header with-border">
+            <h3 class="box-title">Nhập thông tin sản phẩm bên dưới</h3>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form role="form" id="productForm" name="productForm" method="POST" autocomplete="off">
+            <input type="hidden" value="0" id="id" name="id">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="name">Tên sản phẩm
+                  <span class="red">*</span>
+                </label>
+                <input type="text" class="form-control" maxlength="100" id="name" name="name" placeholder="Nhập tên sản phẩm">
+              </div>
+              <div class="form-group">
+                <label for="description">Mô tả</label>
+                <textarea class="form-control" id="description" maxlength="500" name="description" rows="3" placeholder="Nhập mô tả"></textarea>
+              </div>
+              <div class="form-group pos-relative">
+                <label for="category">Danh Mục
+                  <span class="red">*</span>
+                </label>
+                <input type="text" class="form-control text-capitalize" maxlength="100" id="category" name="category" placeholder="Nhập danh mục">
+                <div class="category-dr"></div>
+              </div>
+              <div class="form-group">
+                <label for="category">Kích Cỡ / Size</label>
+                <input type="hidden" id="size" name="size" value="none">
+                <div class="group-pick">
+                  <div data-value="none" class="select">Free size</div>
+                  <div data-value="xs">xs</div>
+                  <div data-value="s">s</div>
+                  <div data-value="m">m</div>
+                  <div data-value="l">l</div>
+                  <div data-value="xl">xl</div>
+                  <div data-value="xxl">xxl</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="price">Giá sản phẩm
+                  <span class="red">*</span>
+                </label>
+                <div class="input-group price">
+                  <input type="text" maxlength="7" id="price-display" name="price-display" class="form-control">
+                  <span class="input-group-addon">000</span>
+                </div>
+                <span class="format-price"></span>
+                <input type="hidden" id="price" name="price" value="0">
+              </div>
+            </div>
+            <!-- /.box-body -->
+
+            <div class="box-footer">
+              <button type="submit" id="bnt-save" class="btn btn-primary">Lưu Sản Phẩm</button>
+              <button type="button" id="bnt-reset" class="btn btn-danger">Nhập lại</button>
+            </div>
+          </form>
+        </div>
+        <div class="box box-primary" id="info-display" style="display: none;">
+          <div class="box-header with-border">
+            <h3 class="box-title">Thông tin sản phẩm vừa lưu</h3>
+            <span style="font-size: 12px;">&nbsp;(Ghi mã sản phẩm lên Tag)</span>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <table class="table table-bordered">
+              <tr>
+                <td width="40%" class="cell-bold">Mã sản phẩm</td>
+                <td width="60%" class="cell-bold" id="info-id"></td>
+              </tr>
+              <tr>
+                <td width="40%">Tên sản phẩm</td>
+                <td width="60%" id="info-name"></td>
+              </tr>
+              <tr>
+                <td width="40%">Danh mục</td>
+                <td width="60%" id="info-category"></td>
+              </tr>
+              <tr>
+                <td width="40%">Kích cỡ / size</td>
+                <td width="60%" id="info-size"></td>
+              </tr>
+              <tr>
+                <td width="40%">Giá sản phẩm</td>
+                <td width="60%" id="info-price"></td>
+              </tr>
+            </table>
+          </div>
+          <div class="box-footer">
+            <button type="button" id="btn-addnew" class="btn btn-primary">Nhập sản phẩm mới</button>
+            <button type="button" id="btn-edit" class="btn btn-default">Chỉnh sửa sản phẩm</button>
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Thông tin</h4>
+      </div>
+      <div class="modal-body">
+        <p>Lưu sản phẩm thành công</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<script src="/assets/js/product-service.js"></script>
+<script type="text/javascript">
+  var recentId = '';  
+
+  $(document).ready(() => {
+    // hander params id 
+    handleParam()
+
+    // hander product form
+    handleForm();
+
+    // hander category dropdown
+    handleCategoryDr();
+
+    // setup size pick
+    $('.group-pick div').each(function () {
+      $(this).on('click', function () {
+        $('.group-pick div').removeClass('select');
+        let value = $(this).attr('data-value');
+        $(this).addClass('select');
+        $('#size').val(value);
+      })
+    })
+    // setup price onchange
+    $('#price-display').on('input', function () {
+      let val = $(this).val();
+      if (val && !isNaN(val)) {
+        let price = parseInt(val) * 1000;
+        $('.format-price').html(formatter.format(price));
+        $('#price').val(price);
+      } else {
+        $('.format-price').html(null);
+        $('#price').val(0);
+      }
+    });
+
+    function handleForm() {
+      $('#bnt-reset').click(function () {
+        resetForm($("#productForm"));
+      });
+      $('#btn-edit').click(function () {
+        if (recentId)
+          document.location.href = '/edit-product/' + recentId;
+        else
+          document.location.href = '/edit-product';
+      })
+      $('#btn-addnew').click(function () {
+        document.location.href = '/edit-product';
+      })
+
+      $("#productForm").submit(function (e) {
+        const form = this;
+        e.preventDefault();
+        $('#category').val($('#category').val().capitalize());
+        let data = getFormData($(form));
+        if ($(form).valid()) {
+          $('#bnt-save').attr('disabled', true);
+          $('#bnt-reset').attr('disabled', true);
+          $('#bnt-save').text('Đang Lưu...');
+          ProductService.saveProduct(data).then(saveProduct => {
+            $('#bnt-save').attr('disabled', false);
+            $('#bnt-reset').attr('disabled', false);
+            $('#bnt-save').text('Lưu Sản Phẩm');
+            if (saveProduct) {
+              recentId = saveProduct.serialNum;
+              $('#modal-default').find('.modal-body p').html('Lưu sản phẩm thành công');
+              $('#modal-default').modal('show');
+              //resetForm($(form));
+              toggleInfo(true);
+              mapToInfo(saveProduct);
+            } else {
+              $('#modal-default').find('.modal-body p').html('Lưu sản phẩm không thành công, tải lại trang và thực hiện lại');
+              $('#modal-default').modal('show');
+            }
+          })
+        }
+      });
+      $("#productForm").validate({
+        rules: {
+          name: {
+            required: true
+          },
+          category: {
+            required: true
+          },
+          "price-display": {
+            required: true,
+            number: true
+          }
+        },
+        messages: {
+          name: "Hãy nhập tên sản phẩm",
+          category: "Hãy nhập hoặc chọn một danh mục có sẵn",
+          "price-display": {
+            required: "Hãy nhập giá sản phẩm",
+            number: "Giá sản phẩm không đúng",
+          }
+        },
+        errorPlacement: function (error, element) {
+          if (element.parent().hasClass('input-group')) {
+            error.appendTo(element.parent().parent());
+          } else {
+            error.appendTo(element.parent());
+          }
+        },
+      });
+    }
+
+    function resetForm($form) {
+      $form.trigger('reset');
+      $('.format-price').html(null);
+      $('#size').val('none');
+      $('#name').focus();
+    }
+
+    function mapToInfo(data) {
+      $('#info-id').html(`<span class="badge bg-red medium">${data.serialNum}</span>`);
+      $('#info-name').html(data.name);
+      $('#info-category').html(data.category);
+      $('#info-size').html(data.size); $('#info-size').css('text-transform', 'uppercase');
+      $('#info-price').html(formatter.format(data.price));
+    }
+
+    function clearInfo(data) {
+      $('#info-id').html(null);
+      $('#info-name').html(null);
+      $('#info-category').html(null);
+      $('#info-size').html(null); $('#info-size').css('text-transform', 'uppercase');
+      $('#info-price').html(null);
+    }
+
+    function toggleInfo(status) {
+      if (status) {
+        $('#form-display').hide();
+        $('#info-display').show();
+      } else {
+        $('#form-display').show();
+        $('#info-display').hide();
+      }
+    }
+
+    function handleParam() {
+      let id = '{{serialNum}}';
+      if (id) {
+        $('#id').val(parseInt(id) || 0);
+        $('#name').val('{{name}}');
+        $('#description').val('{{description}}');
+        $('#category').val('{{category}}');
+        mapSizeToPicker('{{size}}');
+        mapPriceToPriceDisplay({{ price }});
+      }
+    }
+
+  var origin_categories = [];
+
+  function handleCategoryDr() {
+    ProductService.getCategories().then(data => {
+      let categories = data.map((d) => d.name);
+      origin_categories = categories;
+      generateDrItem(categories);
+    })
+    let cateInput = $('#category');
+    cateInput.on('focus', function () {
+      let cateDr = $('.category-dr');
+      if (!cateDr.is(':empty')) {
+        cateDr.addClass('show');
+      }
+      $(this).select();
+    })
+    cateInput.on('input', function (e) {
+      let v = e.target.value || '';
+      let categories = origin_categories;
+      if (v) {
+        categories = categories.filter(c => c.toLowerCase().indexOf(v.toLowerCase()) != -1);
+      }
+      generateDrItem(categories);
+    })
+
+    // handle click outside input
+    $(window).click(function() {
+      let cateDr = $('.category-dr');
+      cateDr.removeClass('show');
+    });
+
+    $('#category-dr').click(function(event){
+        event.stopPropagation();
+    });
+    cateInput.click(function(event){
+        event.stopPropagation();
+    });
+  }
+
+  function generateDrItem(categories) {
+    let cateDr = $('.category-dr');
+    cateDr.html(null);
+    if (!categories || categories.length == 0) return;
+    for (let i = 0; i < categories.length; i++) {
+      cateDr.append(`<div class="cate-item" data-value="${categories[i]}">${categories[i]}</div>`);
+
+    }
+    $('.cate-item').each(function () {
+      $(this).click(function () {        
+        $('#category').val($(this).attr('data-value'));
+      })
+    })
+  }
+
+  function mapSizeToPicker(size) {
+    if ($(`.group-pick div[data-value="${size}"]`).length == 0) {
+      triggerEvent($(`.group-pick div[data-value="none"]`), 'click');
+    } else {
+      triggerEvent($(`.group-pick div[data-value="${size}"]`), 'click');
+    }
+  }
+
+  function mapPriceToPriceDisplay(price) {
+    let priceDisplay = Math.round(price / 1000);
+    $('#price-display').val(priceDisplay);
+    triggerEvent($('#price-display'), 'input');
+  }
+
+  function triggerEvent($ele, event) {
+    setTimeout(function () {
+      $ele.trigger(event);
+    }, 100);
+  }
+  })
+</script>

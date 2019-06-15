@@ -1,0 +1,1 @@
+export const DATABASE = process.env.DB || 'mongodb://localhost/nhienshop';

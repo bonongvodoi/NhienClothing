@@ -1,0 +1,162 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Danh Sách Sản Phẩm
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a href="/">
+          <i class="fa fa-dashboard"></i> Trang Bán Hàng</a>
+      </li>
+      <li class="active">Danh Sách Sản Phẩm</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="box box-primary" id="form-display">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
+          <div class="box-header with-border">
+            <h3 class="box-title">Danh sách chi tiết sản phẩm tại Nhiên Clothing</h3>
+            <br/>
+            <span style="font-size: 12px;">(Bấm vào MÃ SẢN PHẨM để chỉnh sửa)</span>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="product-con">
+              <div class="col-md-5" style="padding: 0;">
+                <div class="form-group">
+                  <label for="searchProduct" class="control-label">Tìm kiếm (theo Mã, Tên, Danh mục, Giá): </label>
+                  <input type="text" autofocus="true" class="form-control" id="searchProduct" placeholder="Tìm kiếm">
+                </div>
+              </div>
+              <div class="col-md-7" style="padding: 0;">
+                <a href="/edit-product" class="btn btn-primary pull-right" style="margin-top: 22px;">Thêm Sản Phẩm</a>
+              </div>
+              <table id="product-table" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th width="120">MÃ SẢN PHẨM</th>
+                    <th width="150">Tên sản phẩm</th>
+                    <th width="250">Mô tả</th>
+                    <th width="100">Danh mục</th>
+                    <th width="100">Kích cỡ / size</th>
+                    <th width="120">Giá sản phẩm</th>
+                    <th>CT Giảm giá</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<script src="/assets/js/product-service.js"></script>
+<script type="text/javascript">
+  var productData;
+  $(document).ready(() => {
+    ProductService.getAll().then(data => {
+      setTimeout(function () {
+        loading(false);
+      }, 500);
+      if (!data || data.length == 0) {
+        productData = [];
+      } else {
+        setupDatatable(data);
+      }
+    })
+  })
+
+  function setupDatatable(data) {
+    // map raw data and sort by create date
+    productData = data.map(d => ({
+      id: formatId(d.serialNum),
+      name: d.name,
+      description: d.description,
+      category: d.category,
+      size: formatSize(d.size),
+      price: formatPrice(d.price, d.discounted_price),
+      //discounted_price: formatPrice(d.discounted_price),
+      campaign: formatCampaign(d.campaign),
+      createdAt: d.createdAt
+    })).sort((a, b) => {
+      let d1 = new Date(a.createdAt);
+      let d2 = new Date(b.createdAt);
+      return d2.getTime() - d1.getTime();
+    });
+
+    //configure for datatable
+    var mainTable = $('#product-table').DataTable({
+      "data": productData,
+      "columns": [
+        { "data": "id", "className": "text-center" },
+        { "data": "name" },
+        { "data": "description", "searchable": false },
+        { "data": "category" },
+        { "data": "size", "className": "text-center", "searchable": false },
+        { "data": "price", "className": "text-right" },
+        { "data": "campaign", "searchable": false },
+      ],
+      'paging': true,
+      'lengthChange': false,
+      'searching': true,
+      'ordering': false,
+      'info': true,
+      'autoWidth': false,
+      'language': datatableLang,
+    });
+
+    //configure for search
+    $('#searchProduct').on('input', function () {
+      mainTable.search(this.value).draw();
+    });
+  }
+
+  function loading(status) {
+    status ? $('#loader').show() : $('#loader').hide();
+  }
+  function formatId(id) {
+    return `<a href="/edit-product/${id}"><span class="badge bg-red medium c-pointer">${id}</span></a>`
+  }
+  function formatSize(size) {
+    if (size == 'none') return `<div class="group-pick" style="padding: 0"><div style="padding: 0 10px;margin: 0 auto;">Free size</div></div>`
+    return `<div class="group-pick" style="padding: 0"><div style="padding: 0 10px;margin: 0 auto;">${size}</div></div>`;
+  }
+  function formatPrice(price, discounted_price) {
+    if (!discounted_price)
+      return formatter.format(price || 0);
+    return `(<span class="text-strike">${formatter.format(price || 0)}</span>)<br><span>${formatter.format(discounted_price || 0)}</span>`
+  }
+
+  function formatCampaign(c) {
+    if (!c) return '';
+
+    let cText = 'Khuyến mãi ';
+    switch(c.type) {
+      case 'discount_by_percent': 
+      cText+= `giảm ${c.discount_value * 100}% trên giá bán`;
+      break;
+      case 'discount_by_value': 
+      cText+= `giảm ${formatPrice(c.discount_value)} trên giá bán`;
+      break;
+      case 'same_price': 
+      cText+= `đồng giá ${formatPrice(c.discount_value)}`;
+      break;
+    }
+    return cText;
+  }
+</script>
