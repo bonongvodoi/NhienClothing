@@ -48,7 +48,7 @@ class App {
 
     //route
     let route = this.app.use('/', require('./controllers/index'));
-    this.app.use(subdomain('admin', route))
+    //this.app.use(subdomain('admin', route))
 
     // production error handler
     this.app.use((err, req, res, next) => {
