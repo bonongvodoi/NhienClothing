@@ -8,7 +8,7 @@
     "build": "tsc",
     "dev": "cross-env PORT=3000 nodemon --watch *.ts --exec ts-node ./src/server.ts",
     "debug": "cross-env PORT=3000 && nodemon --watch *.ts --exec node --inspect -r ts-node/register ./src/server.ts",
-    "start": "cross-env PORT=5000 nodemon ./dist/server.js",
+    "start": "cross-env PORT=80 nodemon ./dist/server.js",
     "all:install": "bower install && npm install",
     "prod": "npm run all:install && npm run build && npm run start"
   },
@@ -23,6 +23,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "express-subdomain": "^1.0.5",
     "express-validator": "^5.3.1",
     "hbs": "^4.0.4",
     "jsonwebtoken": "^8.5.1",

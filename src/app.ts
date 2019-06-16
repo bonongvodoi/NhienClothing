@@ -5,6 +5,8 @@ import registerHBSHelpers from "./lib/hbsHelpers";
 import './migration/adminUser';
 import { redirectWithQuery } from "./lib/httpHelpers";
 
+const subdomain = require('express-subdomain');
+
 mongoose;
 
 const fs = require('fs');
@@ -45,7 +47,8 @@ class App {
     registerHBSHelpers(hbs);
 
     //route
-    this.app.use('/', require('./controllers/index'))
+    let route = this.app.use('/', require('./controllers/index'));
+    this.app.use(subdomain('admin', route))
 
     // production error handler
     this.app.use((err, req, res, next) => {
