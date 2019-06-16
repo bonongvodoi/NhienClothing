@@ -1,6 +1,6 @@
 import * as express from "express";
-import { Campaign } from "../../models/schemas/campaignSchema";
-import { Product } from "../../models/schemas/productSchema";
+import { Campaign } from "../../../models/schemas/campaignSchema";
+import { Product } from "../../../models/schemas/productSchema";
 
 const router = express.Router();
 

@@ -1,22 +1,23 @@
 import { Product } from "../models/schemas/productSchema";
+import { isAuthenticated } from "../lib/auth";
 
 const Router = require('express').Router();
 
 const CACHE_EXPIRY = 3600;
 
-Router.get('/', (req, res) => {
+Router.get('/', isAuthenticated, (req, res) => {
   res.render('index');
 });
-Router.get('/print-order', (req, res) => {
+Router.get('/print-order', isAuthenticated, (req, res) => {
   res.render('printOrder');
 });
-Router.get('/product', (req, res) => {
+Router.get('/product', isAuthenticated, (req, res) => {
   res.render('product');
 });
-Router.get('/edit-product', (req, res) => {
+Router.get('/edit-product', isAuthenticated, (req, res) => {
   res.render('editProduct');
 });
-Router.get('/edit-product/:id', (req, res) => {
+Router.get('/edit-product/:id', isAuthenticated, (req, res) => {
   let id = req.params.id;
   if (id) {
     let query = buildQuery(id);
@@ -31,19 +32,19 @@ Router.get('/edit-product/:id', (req, res) => {
     res.render('editProduct', {});
   }  
 });
-Router.get('/campaign', (req, res) => {
+Router.get('/campaign', isAuthenticated, (req, res) => {
   res.render('campaign');
 });
-Router.get('/edit-campaign', (req, res) => {
+Router.get('/edit-campaign', isAuthenticated, (req, res) => {
   res.render('editCampaign');
 });
-Router.get('/order', (req, res) => {
+Router.get('/order', isAuthenticated, (req, res) => {
   res.render('order');
 });
-Router.get('/statistics-1', (req, res) => {
+Router.get('/statistics-1', isAuthenticated, (req, res) => {
   res.render('statistics1');
 });
-Router.get('/statistics-2', (req, res) => {
+Router.get('/statistics-2', isAuthenticated, (req, res) => {
   res.render('statistics2');
 });
 function buildQuery(id) {

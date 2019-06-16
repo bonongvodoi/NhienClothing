@@ -30,6 +30,7 @@
 
 <!-- Google Font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i&display=swap" rel="stylesheet">
 
 <!-- Site CSS -->
 <link rel="stylesheet" href="/assets/css/site.css">
@@ -42,8 +43,23 @@
   crossorigin="anonymous"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.css" />
 <script type="text/javascript" src="/assets/plugins/datatable/datatables.min.js"></script>
+<script src="/assets/js/auth-service.js"></script>
 
 <script type="text/javascript">
+  var currentUser = AuthService.getCurrentUser() ? AuthService.getCurrentUser().currentUser : '';
+  $.ajaxSetup({
+    beforeSend: function (xhr) {
+      let session = AuthService.getCurrentUser();
+      xhr.setRequestHeader("authorization", session ? session.accessToken : '');
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      if (jqXHR.status == 401) {
+        document.location.href = '/page/login';
+      } else {
+        //alert("Error: " + textStatus + ": " + errorThrown);
+      }
+    }
+  });
   const formatter = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND',

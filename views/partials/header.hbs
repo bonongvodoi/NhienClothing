@@ -1,0 +1,56 @@
+<header class="main-header">
+  <!-- Logo -->
+  <a href="/" class="logo">
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini">
+      <b>NH</b>
+    </span>
+    <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg">
+      <b>Nhien</b>Clothing</span>
+  </a>
+  <!-- Header Navbar: style can be found in header.less -->
+  <nav class="navbar navbar-static-top">
+    <!-- Sidebar toggle button-->
+    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+      <span class="sr-only">NAV</span>
+    </a>
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="#" data-toggle="modal" data-target="#modal-default">
+            <i class="fa fa-sign-out"></i>
+            Đăng xuất
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Xác nhận</h4>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc muốn Đăng xuất?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="logout()">Vâng tôi muốn</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Thôi</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<script>
+  function logout() {
+    AuthService.logout();
+    document.location.href = '/page/login';
+  }
+</script>
