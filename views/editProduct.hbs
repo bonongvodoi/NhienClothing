@@ -118,7 +118,7 @@
   </section>
   <!-- /.content -->
 </div>
-<div class="modal fade" id="modal-default">
+<div class="modal fade" id="modal-default-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -204,14 +204,14 @@
             $('#bnt-save').text('Lưu Sản Phẩm');
             if (saveProduct) {
               recentId = saveProduct.serialNum;
-              $('#modal-default').find('.modal-body p').html('Lưu sản phẩm thành công');
-              $('#modal-default').modal('show');
+              $('#modal-default-1').find('.modal-body p').html('Lưu sản phẩm thành công');
+              $('#modal-default-1').modal('show');
               //resetForm($(form));
               toggleInfo(true);
               mapToInfo(saveProduct);
             } else {
-              $('#modal-default').find('.modal-body p').html('Lưu sản phẩm không thành công, tải lại trang và thực hiện lại');
-              $('#modal-default').modal('show');
+              $('#modal-default-1').find('.modal-body p').html('Lưu sản phẩm không thành công, tải lại trang và thực hiện lại');
+              $('#modal-default-1').modal('show');
             }
           })
         }
