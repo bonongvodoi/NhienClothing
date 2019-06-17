@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "cross-env PORT=3000 nodemon --watch *.ts --exec ts-node ./src/server.ts",
-    "debug": "cross-env PORT=3000 && nodemon --watch *.ts --exec node --inspect -r ts-node/register ./src/server.ts",
-    "start": "cross-env PORT=5000 pm2 start nodemon ./dist/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon --watch *.ts --exec ts-node ./src/server.ts",
+    "debug": "cross-env NODE_ENV=development && nodemon --watch *.ts --exec node --inspect -r ts-node/register ./src/server.ts",
+    "start": "cross-env NODE_ENV=production pm2 start nodemon ./dist/server.js",
     "all:install": "bower install && npm install",
     "prod": "npm run all:install && npm run build && npm run start"
   },

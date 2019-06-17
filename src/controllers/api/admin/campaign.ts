@@ -13,8 +13,9 @@ router.post('/save-campaign', function (req, res, next) {
   let endDate = new Date(data.end_date);
 
   let campaign;
-  getByQuery(data).then((_campaign = new Campaign()) => {
+  getByQuery(data).then((_campaign) => {
     campaign = _campaign;
+    if (!campaign) campaign = new Campaign();
     campaign.name = data.name;
     campaign.description = data.description;
     campaign.type = data.type;
@@ -22,10 +23,17 @@ router.post('/save-campaign', function (req, res, next) {
       case 'discount_by_percent':
         let disValue = data.discount_value > 100 ? 1 : data.discount_value < 1 ? 0.01 : round(data.discount_value / 100);
         campaign.discount_value = disValue;
+        campaign.order_min_value = 0;
         break;
       case 'discount_by_value':
       case 'same_price':
         campaign.discount_value = data.discount_value;
+        campaign.order_min_value = 0;
+        break;
+      case 'order_discount':
+        let d = data.discount_value > 100 ? 1 : data.discount_value < 1 ? 0.01 : round(data.discount_value / 100);
+        campaign.order_min_value = data.order_min_value;
+        campaign.discount_value = d;
         break;
       default:
         disValue = data.discount_value > 100 ? 1 : data.discount_value < 1 ? 0.01 : round(data.discount_value / 100);
@@ -53,7 +61,16 @@ router.post('/save-campaign', function (req, res, next) {
 });
 
 router.get('/all', function (req, res, next) {
-  Campaign.find({}).then(campaigns => {
+  let minPrice = req.query.minPrice;
+  let query = {};
+  let sort = {}
+  if (minPrice && !isNaN(parseInt(minPrice))) {
+    query['order_min_value'] = {$lte: parseInt(minPrice)}
+    sort = {'order_min_value': -1};
+  } else {
+    sort = {'_id': -1};
+  }
+  Campaign.find(query).sort(sort).then(campaigns => {
     res.status(200).send({
       success: true,
       data: campaigns
@@ -107,6 +124,7 @@ router.post('/add-to-campaign/:id', function (req, res, next) {
   }
   let productId = req.body.productId;
   let category = req.body.category;
+  let ids = req.body.ids;
   let isAll = !!req.body.addAll;
 
   let campaign;
@@ -117,7 +135,8 @@ router.post('/add-to-campaign/:id', function (req, res, next) {
       })
     campaign = _campaign;
     if (campaign.status != 'active') return Promise.resolve(null);
-    let query = buildProductQuery(productId, category, isAll);
+    if (campaign.type == 'order_discount') return Promise.resolve(null);
+    let query = buildProductQuery(productId, category, ids, isAll);
     if (query != null) {
       return Product.find(query).then(async producs => {
         await updateProduct(producs, campaign);
@@ -151,9 +170,12 @@ router.get('/get/:id', function (req, res, next) {
         message: 'Cant find campaign'
       })
     campaign = _campaign;
+    return Product.find({campaign: campaign.id});    
+  })
+  .then(products => {
     res.status(200).send({
       success: true,
-      data: campaign
+      data: {campaign, products}
     })
   })
 })
@@ -179,13 +201,17 @@ function buildQuery(id) {
   return query;
 }
 
-function buildProductQuery(id, category, isAll = false) {
+function buildProductQuery(id, category, ids, isAll = false) {
   const query: any = {};
   if (isAll) {
     return query;
   }
   if (category) {
     query['category'] = category;
+    return query;
+  }
+  if (ids && ids.length > 0) {
+    query['serialNum'] = { $in: ids }
     return query;
   }
   if (id) {
@@ -210,12 +236,6 @@ function validateCampaign(campaign, next) {
   if (!campaign.name) {
     next({
       message: 'Missing campaign name'
-    })
-    return false;
-  }
-  if (!campaign.discount_value) {
-    next({
-      message: 'Missing campaign discount value'
     })
     return false;
   }

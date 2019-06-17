@@ -18,6 +18,25 @@ class ProductService {
     })
   }
 
+  static getById(id) {
+    return new Promise(resolve => {
+      $.ajax({
+        url: '/api/product/get/' + id,
+        type: 'GET',
+        success: function (response) {
+          if (response.success) {
+            resolve(response.data);
+          } else {
+            resolve(null);
+          }
+        },
+        cache: false,
+        contentType: 'application/json',
+        processData: false
+      });     
+    })
+  }
+
   static saveProduct(data) {
     return new Promise(resolve => {
       $.ajax({

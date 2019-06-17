@@ -8,7 +8,7 @@
         <img src="/assets/img/nhien_ava.png" class="img-circle" alt="Nhien">
       </div>
       <div class="pull-left info">
-        <p id="name"></p>
+        <p id="fullname"></p>
         <a href="#">
           <i class="fa fa-circle text-success"></i> Online</a>
       </div>
@@ -93,7 +93,7 @@
 <script type="text/javascript">
   (function () {
     if (currentUser) {
-      $('#name').html(currentUser.firstName + ' ' + currentUser.lastName);
+      $('#fullname').html(currentUser.firstName + ' ' + currentUser.lastName);
     }
   })();
 </script>

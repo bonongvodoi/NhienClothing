@@ -9,6 +9,8 @@ apiRouter.use('/auth', require('./auth/index'));
 apiRouter.use(require('../../lib/auth').authenticateUser);
 apiRouter.use('/product', require('./admin/product'));
 apiRouter.use('/campaign', require('./admin/campaign'));
+apiRouter.use('/user', require('./admin/users'));
+apiRouter.use('/order', require('./admin/orders'));
 
 
 export = apiRouter

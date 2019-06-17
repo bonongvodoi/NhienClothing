@@ -19,6 +19,9 @@
       <div class="col-md-8 col-md-offset-2">
         <!-- general form elements -->
         <div class="box box-primary" id="form-display">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
           <div class="box-header with-border">
             <h3 class="box-title">Nhập thông tin sản phẩm bên dưới</h3>
           </div>
@@ -141,7 +144,7 @@
 <!-- /.modal -->
 <script src="/assets/js/product-service.js"></script>
 <script type="text/javascript">
-  var recentId = '';  
+  var recentId = '';
 
   $(document).ready(() => {
     // hander params id 
@@ -281,89 +284,100 @@
     }
 
     function handleParam() {
-      let id = '{{serialNum}}';
+      let id = '{{id}}';
       if (id) {
-        $('#id').val(parseInt(id) || 0);
-        $('#name').val('{{name}}');
-        $('#description').val('{{description}}');
-        $('#category').val('{{category}}');
-        mapSizeToPicker('{{size}}');
-        mapPriceToPriceDisplay({{ price }});
+        ProductService.getById(id).then(function (data) {
+          $('#loader').hide();
+          if (!data) return;
+          $('#id').val(parseInt(data.serialNum) || 0);
+          $('#name').val(data.name);
+          $('#description').val(data.description);
+          $('#category').val(data.category);
+          mapSizeToPicker(data.size);
+          mapPriceToPriceDisplay(data.price);
+        }).catch(function () {
+          $('#loader').hide();
+          $('#bnt-save').attr('disabled', false);
+          $('#bnt-reset').attr('disabled', false);
+          $('#bnt-save').text('Lưu Sản Phẩm');
+        })
+      } else {
+        $('#loader').hide();
       }
     }
 
-  var origin_categories = [];
+    var origin_categories = [];
 
-  function handleCategoryDr() {
-    ProductService.getCategories().then(data => {
-      let categories = data.map((d) => d.name);
-      origin_categories = categories;
-      generateDrItem(categories);
-    })
-    let cateInput = $('#category');
-    cateInput.on('focus', function () {
-      let cateDr = $('.category-dr');
-      if (!cateDr.is(':empty')) {
-        cateDr.addClass('show');
-      }
-      $(this).select();
-    })
-    cateInput.on('input', function (e) {
-      let v = e.target.value || '';
-      let categories = origin_categories;
-      if (v) {
-        categories = categories.filter(c => c.toLowerCase().indexOf(v.toLowerCase()) != -1);
-      }
-      generateDrItem(categories);
-    })
-
-    // handle click outside input
-    $(window).click(function() {
-      let cateDr = $('.category-dr');
-      cateDr.removeClass('show');
-    });
-
-    $('#category-dr').click(function(event){
-        event.stopPropagation();
-    });
-    cateInput.click(function(event){
-        event.stopPropagation();
-    });
-  }
-
-  function generateDrItem(categories) {
-    let cateDr = $('.category-dr');
-    cateDr.html(null);
-    if (!categories || categories.length == 0) return;
-    for (let i = 0; i < categories.length; i++) {
-      cateDr.append(`<div class="cate-item" data-value="${categories[i]}">${categories[i]}</div>`);
-
-    }
-    $('.cate-item').each(function () {
-      $(this).click(function () {        
-        $('#category').val($(this).attr('data-value'));
+    function handleCategoryDr() {
+      ProductService.getCategories().then(data => {
+        let categories = data.map((d) => d.name);
+        origin_categories = categories;
+        generateDrItem(categories);
       })
-    })
-  }
+      let cateInput = $('#category');
+      cateInput.on('focus', function () {
+        let cateDr = $('.category-dr');
+        if (!cateDr.is(':empty')) {
+          cateDr.addClass('show');
+        }
+        $(this).select();
+      })
+      cateInput.on('input', function (e) {
+        let v = e.target.value || '';
+        let categories = origin_categories;
+        if (v) {
+          categories = categories.filter(c => c.toLowerCase().indexOf(v.toLowerCase()) != -1);
+        }
+        generateDrItem(categories);
+      })
 
-  function mapSizeToPicker(size) {
-    if ($(`.group-pick div[data-value="${size}"]`).length == 0) {
-      triggerEvent($(`.group-pick div[data-value="none"]`), 'click');
-    } else {
-      triggerEvent($(`.group-pick div[data-value="${size}"]`), 'click');
+      // handle click outside input
+      $(window).click(function () {
+        let cateDr = $('.category-dr');
+        cateDr.removeClass('show');
+      });
+
+      $('#category-dr').click(function (event) {
+        event.stopPropagation();
+      });
+      cateInput.click(function (event) {
+        event.stopPropagation();
+      });
     }
-  }
 
-  function mapPriceToPriceDisplay(price) {
-    let priceDisplay = Math.round(price / 1000);
-    $('#price-display').val(priceDisplay);
-    triggerEvent($('#price-display'), 'input');
-  }
+    function generateDrItem(categories) {
+      let cateDr = $('.category-dr');
+      cateDr.html(null);
+      if (!categories || categories.length == 0) return;
+      for (let i = 0; i < categories.length; i++) {
+        cateDr.append(`<div class="cate-item" data-value="${categories[i]}">${categories[i]}</div>`);
 
-  function triggerEvent($ele, event) {
-    setTimeout(function () {
-      $ele.trigger(event);
-    }, 100);
-  }
+      }
+      $('.cate-item').each(function () {
+        $(this).click(function () {
+          $('#category').val($(this).attr('data-value'));
+        })
+      })
+    }
+
+    function mapSizeToPicker(size) {
+      if ($(`.group-pick div[data-value="${size}"]`).length == 0) {
+        triggerEvent($(`.group-pick div[data-value="none"]`), 'click');
+      } else {
+        triggerEvent($(`.group-pick div[data-value="${size}"]`), 'click');
+      }
+    }
+
+    function mapPriceToPriceDisplay(price) {
+      let priceDisplay = Math.round(price / 1000);
+      $('#price-display').val(priceDisplay);
+      triggerEvent($('#price-display'), 'input');
+    }
+
+    function triggerEvent($ele, event) {
+      setTimeout(function () {
+        $ele.trigger(event);
+      }, 100);
+    }
   })
 </script>

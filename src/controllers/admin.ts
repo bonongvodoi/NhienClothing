@@ -20,20 +20,21 @@ Router.get('/edit-product', isAuthenticated, (req, res) => {
 Router.get('/edit-product/:id', isAuthenticated, (req, res) => {
   let id = req.params.id;
   if (id) {
-    let query = buildQuery(id);
-    Product.findOne(query).then(_product => {
-      let product = _product;
-      res.render('editProduct', product);
-      return;
-    }).catch(() => {
-      res.render('editProduct', {});
-    })
+    res.render('editProduct', {id});
   } else {
     res.render('editProduct', {});
   }  
 });
 Router.get('/campaign', isAuthenticated, (req, res) => {
   res.render('campaign');
+});
+Router.get('/edit-campaign/:id', isAuthenticated, (req, res) => {
+  let id = req.params.id;
+  if (id) {
+    res.render('editCampaign', {id});
+  } else {
+    res.render('editCampaign');
+  }    
 });
 Router.get('/edit-campaign', isAuthenticated, (req, res) => {
   res.render('editCampaign');

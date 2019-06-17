@@ -15,6 +15,191 @@
 
   <!-- Main content -->
   <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="box box-primary" id="form-display">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
+          <div class="box-header with-border">
+            <h3 class="box-title">Danh sách chi tiết khuyến mãi tại Nhiên Clothing</h3>
+            <br/>
+            <span style="font-size: 12px;">(Bấm vào MÃ KHUYẾN MÃI để chỉnh sửa)</span>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="product-con">
+              <div class="col-md-5" style="padding: 0;">
+                <div class="form-group">
+                  <label for="searchProduct" class="control-label">Tìm kiếm (theo Mã, Tên, Trạng thái): </label>
+                  <input type="text" autofocus="true" class="form-control" id="searchProduct" placeholder="Tìm kiếm">
+                </div>
+              </div>
+              <div class="col-md-7" style="padding: 0;">
+                <a href="/edit-campaign" class="btn btn-primary pull-right" style="margin-top: 22px;">Tạo CT Khuyến mãi</a>
+              </div>
+              <table id="product-table" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th width="120">MÃ KHUYẾN MÃI</th>
+                    <th width="150">Tên</th>
+                    <th width="200">Mô tả</th>
+                    <th width="80">Trạng thái</th>
+                    <th>Cách thức khuyến mãi</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
   </section>
   <!-- /.content -->
 </div>
+<script src="/assets/js/product-service.js"></script>
+<script src="/assets/js/campaign-service.js"></script>
+<script type="text/javascript">
+  var campaignData;
+  var mainTable;
+  $(document).ready(() => {
+    getCampaigns();
+  })
+
+  function getCampaigns() {
+    loading(true);
+    CampaignService.getAll().then(data => {
+      setTimeout(function () {
+        loading(false);
+      }, 500);
+      if (!data || data.length == 0) {
+        campaignData = [];
+      } else {
+        setupDatatable(data);
+      }
+    })
+  }
+
+  function setupDatatable(data) {
+    // map raw data and sort by create date
+    campaignData = data.map(d => ({
+      id: formatId(d.serialNum),
+      name: d.name,
+      description: d.description,
+      status: formatStatus(d.serialNum, d.status),
+      campaign: formatCampaign(d),
+      createdAt: d.createdAt
+    })).sort((a, b) => {
+      let d1 = new Date(a.createdAt);
+      let d2 = new Date(b.createdAt);
+      return d2.getTime() - d1.getTime();
+    });
+
+    //configure for datatable
+    mainTable = $('#product-table').DataTable({
+      "data": campaignData,
+      "columns": [
+        { "data": "id", "className": "text-center" },
+        { "data": "name" },
+        { "data": "description", "searchable": false },
+        { "data": "status", "className": "text-center" },
+        { "data": "campaign", "searchable": false },
+      ],
+      'paging': true,
+      'lengthChange': false,
+      'searching': true,
+      'ordering': false,
+      'info': true,
+      'autoWidth': false,
+      'language': datatableLang,
+    });
+
+    //configure for search
+    $('#searchProduct').on('input', function () {
+      mainTable.search(this.value).draw();
+    });
+  }
+
+  function refreshDatatable(data) {
+    // map raw data and sort by create date
+    campaignData = data.map(d => ({
+      id: formatId(d.serialNum),
+      name: d.name,
+      description: d.description,
+      status: formatStatus(d.serialNum, d.status),
+      campaign: formatCampaign(d),
+      createdAt: d.createdAt
+    })).sort((a, b) => {
+      let d1 = new Date(a.createdAt);
+      let d2 = new Date(b.createdAt);
+      return d2.getTime() - d1.getTime();
+    });
+
+    mainTable.clear();
+    mainTable.rows.add(campaignData);
+    mainTable.draw();
+  }
+
+  function loading(status) {
+    status ? $('#loader').show() : $('#loader').hide();
+  }
+  function formatId(id) {
+    return `<a href="/edit-campaign/${id}"><span class="badge bg-red medium c-pointer">${id}</span></a>`
+  }
+  function formatStatus(id, status) {
+    if (status == 'active') {
+      return `<button onclick="changeStatus(${id}, ${false})" class="btn btn-block btn-success">Đang hoạt động</button>`
+    }
+    return `<button onclick="changeStatus(${id}, ${true})" class="btn btn-block btn-warning">Đã đóng</button>`
+  }
+  function formatPrice(price, discounted_price) {
+    if (!discounted_price)
+      return formatter.format(price || 0);
+    return `(<span class="text-strike">${formatter.format(price || 0)}</span>)<br><span>${formatter.format(discounted_price || 0)}</span>`
+  }
+
+  function formatCampaign(c) {
+    if (!c) return '';
+
+    let cText = 'Khuyến mãi ';
+    switch (c.type) {
+      case 'discount_by_percent':
+        cText += `giảm ${c.discount_value * 100}% trên giá bán cho từng sản phẩm`;
+        break;
+      case 'discount_by_value':
+        cText += `giảm ${formatPrice(c.discount_value)} trên giá bán cho từng sản phẩm`;
+        break;
+      case 'same_price':
+        cText += `đồng giá ${formatPrice(c.discount_value)} cho sản phẩm`;
+        break;
+      case 'order_discount':
+        cText += `giảm ${c.discount_value * 100}% trên tổng hóa đơn cho hóa đơn trên ${formatPrice(c.order_min_value)}`;
+        break;
+    }
+    return cText;
+  }
+
+  function changeStatus(id, status) {
+    loading(true);
+    CampaignService.changeStatus(id, status).then(function () {
+      CampaignService.getAll().then(data => {
+        setTimeout(function () {
+          loading(false);
+        }, 500);
+        if (!data || data.length == 0) {
+          campaignData = [];
+        } else {
+          refreshDatatable(data);
+        }
+      })
+    }).catch(function () {
+      loading(false);
+    });
+  }
+</script>

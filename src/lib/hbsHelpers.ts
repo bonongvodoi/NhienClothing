@@ -10,9 +10,6 @@ const helpers = {
   isProduction() {
     return process.env.NODE_ENV == 'production';
   },
-  intercomAppId() {
-    return process.env.NODE_ENV === 'production' ? 'vvoaryvw' : 'ip5kpw3p';
-  },
   if_eq(a, b, opts) {
     if (a == b) {
       return opts.fn(this);

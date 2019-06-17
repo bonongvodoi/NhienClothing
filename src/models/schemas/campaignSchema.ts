@@ -8,8 +8,9 @@ import { Product } from "./productSchema";
 const campaignSchema = new Schema({
   name: { type: String },
   description: { type: String },
-  type: { type: String, default: 'discount_by_percent', enum: ['discount_by_value', 'discount_by_percent', 'same_price'] },
+  type: { type: String, default: 'discount_by_percent', enum: ['discount_by_value', 'discount_by_percent', 'same_price', 'order_discount'] },
   discount_value: { type: Number },
+  order_min_value: { type: Number},
   start_date: { type: Date, },
   end_date: { type: Date, },
   expired: { type: Boolean, default: true },
