@@ -1,5 +1,5 @@
 import { Users } from "../models/schemas/userSchema";
-import { default_ad_email, default_pwd } from "../config/config";
+import { default_ad_email, default_pwd, default_sale_email, default_sale_pwd } from "../config/config";
 
 function initAdmin() {
   let admin;
@@ -16,4 +16,20 @@ function initAdmin() {
   })
 }
 
+function initSale() {
+  let sale;
+  Users.findOne({email: default_sale_email}).then(function(_sale) {
+    if (!_sale) {
+      sale = new Users();
+      sale.email = default_sale_email;
+      sale.firstName = 'Nhiên';
+      sale.lastName = 'Admin';
+      sale.password = default_sale_pwd;
+      sale.role = 'salesman';
+      sale.save();    
+    }
+  })
+}
+
 initAdmin();
+initSale();

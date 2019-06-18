@@ -5,8 +5,7 @@ const uuidv4  = require('uuid/v4');
 
 module.exports = authenticationRouter;
 
-authenticationRouter.post('/', function(req, res, next) {
-  global['currentUser'] = null;
+authenticationRouter.post('/', function(req, res, next) {  
   if (req.body.magicToken) {
     Users.findOne({ magicToken: req.body.magicToken })
       .then(user => {
@@ -51,9 +50,8 @@ authenticationRouter.post('/', function(req, res, next) {
             message: 'Invalid email or password. Try again',
             details: 'Password is not matching',
           };
-        global['currentUser'] = user.getCurrentUser();
-        res.cookie('access_token',JSON.stringify(user.getCurrentUser()), { maxAge: 604800, httpOnly: true });
-        return res.json({ success: true, data: user.getCurrentUser() });
+        res.cookie('access_token', user.getCurrentUser().accessToken, { maxAge: 604800, httpOnly: true });
+        return res.json({ success: true, data: user.getCurrentUserSoft() });
       })
       .catch(next);
   }

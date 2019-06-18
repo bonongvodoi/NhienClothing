@@ -46,11 +46,11 @@
   <!-- jQuery 3 -->
     <script src="/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript">
-    var currentUser = AuthService.getCurrentUser() ? AuthService.getCurrentUser().currentUser : '';
+    var currentUser = AuthService.getCurrentUser() || '';
     $.ajaxSetup({
       beforeSend: function (xhr) {
-        let session = AuthService.getCurrentUser();
-        xhr.setRequestHeader("authorization", session ? session.accessToken : '');
+        //let session = AuthService.getCurrentUser();
+        //xhr.setRequestHeader("authorization", session ? session.accessToken : '');
       },
       error: function (jqXHR, textStatus, errorThrown) {
         if (jqXHR.status == 401) {

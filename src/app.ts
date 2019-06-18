@@ -16,8 +16,6 @@ const cookieParser = require('cookie-parser');
 const requestIp = require('request-ip');
 const expressValidator = require('express-validator');
 
-global['currentUser'] = null;
-
 class App {
 
   public app: express.Application;

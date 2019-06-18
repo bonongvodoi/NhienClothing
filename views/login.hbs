@@ -121,7 +121,7 @@
           $('#bnt-login').attr('disabled', false);
           $('#bnt-login').text('Đăng nhập');
           AuthService.saveUser(d);
-          if (d.currentUser.role == 'admin') {
+          if (d.role == 'admin') {
             document.location.href = '/product';
           } else {
             document.location.href = '/';
