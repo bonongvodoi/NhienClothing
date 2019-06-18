@@ -51,11 +51,14 @@ export async function isAuthenticated(req, res, next) {
 }
 
 function verifyRole(currentUser, url) {
-  let routes = ROLE_ROUTE[currentUser.role];
-  if (routes) {
-    if (routes[0] === 'all') return true;
-    if (routes.indexOf(url) === -1)
+  switch (currentUser.role) {
+    case 'admin':
+    return true;
+    case 'salesman':
+    if (url == '/') return true;
+    if (url.startsWith('/print-order')) return true;
     return false;
+    default:
+    return false;    
   }
-  return true;
 }

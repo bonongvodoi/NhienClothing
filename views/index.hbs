@@ -71,11 +71,11 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body">
-            <div class="order-con" id="print-area" style="min-height: auto;width: 215px;
+            <div class="order-con" id="print-area" style="min-height: auto;width: 180px;
     margin: 0 auto;
-    font-size: 12px; padding: 7px;    border: 1px dashed #cacaca;">
-              <span style="font-size: 24px;
-    line-height: 32px;
+    font-size: 10px; padding: 7px;    border: 1px dashed #cacaca;">
+              <span style="font-size: 20px;
+    line-height: 30px;
     text-align: center;
     font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
     font-weight: 300;
@@ -85,10 +85,10 @@
               <p style="text-align: center;
     line-height: 150%;
     padding-top: 10px;">
-                91 Võ Như Hưng, Khuê Mỹ, Ngũ Hành Sơn, Đà Nẵng
+                91 Võ Như Hưng, Đà Nẵng
                 <br /> Hotline : 0932536995
               </p>
-              <p style="font-size: 14px;text-align:center;
+              <p style="font-size: 12px;text-align:center; font-weight: 600;
     line-height: 22px;">HÓA ĐƠN THANH TOÁN</p>
               <table class="table table-condensed">
                 <tr>
@@ -98,9 +98,9 @@
                   <td width="25%" align="right" id="orderHour"></td>
                 </tr>
               </table>
-              <p style="font-size: 14px;
+              <p style="font-size: 12px; font-weight: 600;
     line-height: 30px;">CHI TIẾT</p>
-              <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 10px; margin-bottom: 0;">
+              <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 9px; margin-bottom: 0;">
                 <tbody></tbody>
               </table>
               <br />
@@ -108,12 +108,25 @@
                 <tbody></tbody>
               </table>
               <p id="totalInText" style="font-style: italic; text-align: center;"></p>
-              <p style="font-size: 14px; text-align: center; padding-top: 15px;
-    line-height: 30px;">XIN CÁM ƠN - HẸN GẶP LẠI</p>
+              <p style="text-align: center;padding-top: 20px;">Hàng đã mua không đổi trả
+                <br />
+                <br /> &starf;&starf;&starf;XIN CẢM ƠN&starf;&starf;&starf;</p>
+              <hr style="border-style: dashed;" />
+              <p style="text-align:center;">...</p>
             </div>
           </div>
           <!-- /.box-body -->
           <div class="box-footer">
+            <div class="form-group">
+              <label for="price-display">Giảm giá thêm cho đơn hàng (nếu có)
+              </label>
+              <div class="input-group price">
+                <input autocomplete="off" type="text" maxlength="7" id="price-display" name="price-display" class="form-control">
+                <span class="input-group-addon">000</span>
+              </div>
+              <span class="format-price"></span>
+              <input type="hidden" id="price" name="price" value="0">
+            </div>
             <div class="form-group">
               <label for="note">Ghi chú cho đơn hàng: </label>
               <textarea class="form-control" id="note" maxlength="500" name="note" rows="3" placeholder="Nhập ghi chú"></textarea>
@@ -136,6 +149,7 @@
   var productData;
   var orderData;
   var tempData = [];
+  var orderDiscount = 0;
   $(document).ready(() => {
     $('#note').val('');
     orderData = {};
@@ -150,6 +164,20 @@
         setupDatatable(data);
       }
     })
+
+    // setup price onchange
+    $('#price-display').on('input', function () {
+      let val = $(this).val();
+      if (val && !isNaN(val)) {
+        let price = parseInt(val) * 1000;
+        $('.format-price').html(formatter.format(price));
+        $('#price').val(price);
+      } else {
+        $('.format-price').html(null);
+        $('#price').val(0);
+      }
+      calMoreDiscount(orderData);
+    });
   })
 
   function addToTemp(e, id) {
@@ -201,7 +229,7 @@
       }
       orderData.totalInText = DocTienBangChu(orderData.total);
       $('#order-display').show();
-      generateOrderForm(orderData);
+      calMoreDiscount(orderData);
     });
     $('#searchProduct').val('');
     $('#searchProduct').trigger('input');
@@ -214,7 +242,7 @@
     $('#order-detail tbody').empty();
     $('#order-detail tbody').append(`<tr>
                   <th>TÊN</th>
-                  <th style="width: 20px; text-align: center;">SL</th>
+                  <th style="width: 15px; text-align: center;">SL</th>
                   <th style="width: 40px; ">ĐG</th>
                   <th style="width: 40px; ">T. TIỀN</th>
                 </tr>`);
@@ -227,18 +255,18 @@
     $('#order-sum tbody').empty();
 
     let trGrandPrice = `<tr>
-                  <td width="50%" style="font-size: 12px;">TIỀN MẶT</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.grandPrice)}</td>
+                  <td width="50%" style="font-size: 11px;">TIỀN MẶT</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.grandPrice)}</td>
                 </tr>`
     $('#order-sum tbody').append(trGrandPrice);
     if (order.discountPrice) {
       $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 12px;">GIẢM GIÁ</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.discountPrice)}</td>
+                  <td width="50%" style="font-size: 11px;">GIẢM GIÁ</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.discountPrice)}</td>
                 </tr>`)
       $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 12px;">THÀNH TIỀN</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.total)}</td>
+                  <td width="50%" style="font-size: 11px;">THÀNH TIỀN</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.total)}</td>
                 </tr>`)
     }
 
@@ -251,6 +279,21 @@
       })
     });
   }
+
+  function calMoreDiscount(order) {
+    if (!order) return;
+    let moreDiscount = !isNaN(parseInt($('#price').val())) ? parseInt($('#price').val()) : 0
+    if (moreDiscount) {
+      order.discountPrice = orderDiscount + moreDiscount;
+    } else {
+      order.discountPrice = orderDiscount;
+    }
+    order.total = order.grandPrice - order.discountPrice;
+    if (order.total < 0) order.total = 0;
+    order.totalInText = DocTienBangChu(orderData.total);
+    generateOrderForm(order);
+  }
+
   function setupDatatable(data) {
     // map raw data and sort by create date
     productData = data.map(d => ({
@@ -352,7 +395,9 @@
       order.discountPrice = roundThousand(order.grandPrice * discount);
     else
       order.discountPrice = 0;
+    orderDiscount = order.discountPrice;
     order.total = order.grandPrice - order.discountPrice;
+    if (order.total < 0) order.total = 0;
   }
   function roundThousand(num) {
     return Math.round((num + 0.00001) * 0.001) / 0.001;
