@@ -71,9 +71,11 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body">
-            <div class="order-con" style="min-height: auto;">
-              <span style="font-size: 32px;
-    line-height: 50px;
+            <div class="order-con" id="print-area" style="min-height: auto;width: 215px;
+    margin: 0 auto;
+    font-size: 12px; padding: 7px;    border: 1px dashed #cacaca;">
+              <span style="font-size: 24px;
+    line-height: 32px;
     text-align: center;
     font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
     font-weight: 300;
@@ -86,9 +88,9 @@
                 91 Võ Như Hưng, Khuê Mỹ, Ngũ Hành Sơn, Đà Nẵng
                 <br /> Hotline : 0932536995
               </p>
-              <p style="font-size: 18px;
-    line-height: 30px;">HÓA ĐƠN THANH TOÁN</p>
-              <table class="table">
+              <p style="font-size: 14px;text-align:center;
+    line-height: 22px;">HÓA ĐƠN THANH TOÁN</p>
+              <table class="table table-condensed">
                 <tr>
                   <td width="25%">Ngày</td>
                   <td width="25%" align="right" id="orderDate" style="padding-right: 20px;"></td>
@@ -96,9 +98,9 @@
                   <td width="25%" align="right" id="orderHour"></td>
                 </tr>
               </table>
-              <p style="font-size: 18px;
+              <p style="font-size: 14px;
     line-height: 30px;">CHI TIẾT</p>
-              <table class="table table-bordered table-condensed" id="order-detail">
+              <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 10px; margin-bottom: 0;">
                 <tbody></tbody>
               </table>
               <br />
@@ -106,7 +108,7 @@
                 <tbody></tbody>
               </table>
               <p id="totalInText" style="font-style: italic; text-align: center;"></p>
-              <p style="font-size: 18px; text-align: center; padding-top: 15px;
+              <p style="font-size: 14px; text-align: center; padding-top: 15px;
     line-height: 30px;">XIN CÁM ƠN - HẸN GẶP LẠI</p>
             </div>
           </div>
@@ -117,7 +119,8 @@
               <textarea class="form-control" id="note" maxlength="500" name="note" rows="3" placeholder="Nhập ghi chú"></textarea>
             </div>
             <button type="button" id="btn-saveorder" class="btn btn-primary">Lưu &amp; In hóa đơn</button>
-            {{!-- <a type="button" href="/" class="btn btn-default">Hủy &amp; Tạo hóa đơn mới</a> --}}
+            {{!--
+            <a type="button" href="/" class="btn btn-default">Hủy &amp; Tạo hóa đơn mới</a> --}}
           </div>
         </div>
         <!-- /.box -->
@@ -211,44 +214,43 @@
     $('#order-detail tbody').empty();
     $('#order-detail tbody').append(`<tr>
                   <th>TÊN</th>
-                  <th style="width: 40px; text-align: center;">SL</th>
-                  <th style="width: 80px; ">ĐG</th>
-                  <th style="width: 80px; ">T. TIỀN</th>
+                  <th style="width: 20px; text-align: center;">SL</th>
+                  <th style="width: 40px; ">ĐG</th>
+                  <th style="width: 40px; ">T. TIỀN</th>
                 </tr>`);
     if (order.orderDetail && order.orderDetail.length > 0) {
       order.orderDetail.forEach(function (d) {
-        let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price)}</td><td>${formatPrice(d.total)}</td></tr>`
+        let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price).replace(' ₫', '')}</td><td>${formatPrice(d.total).replace(' ₫', '')}</td></tr>`
         $('#order-detail tbody').append(tr);
       })
     }
     $('#order-sum tbody').empty();
 
     let trGrandPrice = `<tr>
-                  <td width="50%" style="font-size: 16px;">TIỀN MẶT</td>
-                  <td width="50%" style="font-size: 16px;" align="right">${formatPrice(order.grandPrice)}</td>
+                  <td width="50%" style="font-size: 12px;">TIỀN MẶT</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.grandPrice)}</td>
                 </tr>`
     $('#order-sum tbody').append(trGrandPrice);
     if (order.discountPrice) {
       $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 16px;">GIẢM GIÁ</td>
-                  <td width="50%" style="font-size: 16px;" align="right">${formatPrice(order.discountPrice)}</td>
+                  <td width="50%" style="font-size: 12px;">GIẢM GIÁ</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.discountPrice)}</td>
                 </tr>`)
       $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 16px;">THÀNH TIỀN</td>
-                  <td width="50%" style="font-size: 16px;" align="right">${formatPrice(order.total)}</td>
+                  <td width="50%" style="font-size: 12px;">THÀNH TIỀN</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.total)}</td>
                 </tr>`)
     }
 
     $('#totalInText').html(`(${order.totalInText})`);
-    $('#btn-saveorder').on('click', function() {
+    $('#btn-saveorder').on('click', function () {
       order.note = $('#note').val();
-      OrderService.saveOrder(order).then(function(data) {
+      OrderService.saveOrder(order).then(function (data) {
         if (!data || !data.serialNum) document.location.href = '/';
         else document.location.href = '/print-order/' + data.serialNum;
       })
     });
   }
-
   function setupDatatable(data) {
     // map raw data and sort by create date
     productData = data.map(d => ({
@@ -320,8 +322,10 @@
     return `<span class="badge bg-red medium c-pointer">${id}</span>`
   }
   function formatPrice(price, discounted_price) {
-    if (!discounted_price)
-      return formatter.format(price || 0);
+    if (!discounted_price) {
+      let format = formatter.format(price || 0);
+      return format
+    }
     return `(<span class="text-strike">${formatter.format(price || 0)}</span>)<br><span>${formatter.format(discounted_price || 0)}</span>`
   }
   function formatQuantity(id) {

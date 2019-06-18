@@ -1,20 +1,314 @@
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <section class="content-header">
-    <h1>
-      In Hóa Đơn
-    </h1>
-    <ol class="breadcrumb">
-      <li>
-        <a href="/">
-          <i class="fa fa-dashboard"></i> Trang Bán Hàng</a>
-      </li>
-      <li class="active">In Hóa Đơn</li>
-    </ol>
-  </section>
+<!DOCTYPE html>
+<html>
 
-  <!-- Main content -->
-  <section class="content">
-  </section>
-  <!-- /.content -->
-</div>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Nhiên Shop - Trang Quản Lý</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/Ionicons/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/assets/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="/assets/css/skins/_all-skins.min.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="/morris.js/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="/jvectormap/jquery-jvectormap.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i&display=swap" rel="stylesheet">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="/assets/css/site.css">
+
+  <script src="/assets/js/auth-service.js"></script>
+  <!-- jQuery 3 -->
+    <script src="/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript">
+    var currentUser = AuthService.getCurrentUser() ? AuthService.getCurrentUser().currentUser : '';
+    $.ajaxSetup({
+      beforeSend: function (xhr) {
+        let session = AuthService.getCurrentUser();
+        xhr.setRequestHeader("authorization", session ? session.accessToken : '');
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 401) {
+          document.location.href = '/page/login';
+        } else {
+          //alert("Error: " + textStatus + ": " + errorThrown);
+        }
+      }
+    });
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0
+    })
+    const datatableLang = {
+      'emptyTable': 'Không có sản phẩm nào',
+      'info': 'Hiển thị sản phẩm từ _START_ đến _END_ của tổng cộng _TOTAL_',
+      'infoEmpty': 'Hiển thị sản phẩm từ 0 đến 0 của tổng cộng 0',
+      'zeroRecords': 'Không tìm thấy sản phẩm nào',
+      'infoFiltered': '',
+      "paginate": {
+        "first": "Đầu tiên",
+        "last": "Cuối cùng",
+        "next": "Sau",
+        "previous": "Trước"
+      }
+    }
+    const ChuSo = new Array(" không ", " một ", " hai ", " ba ", " bốn ", " năm ", " sáu ", " bảy ", " tám ", " chín ");
+    const Tien = new Array("", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ");
+
+    function DocSo3ChuSo(baso) {
+      var tram;
+      var chuc;
+      var donvi;
+      var KetQua = "";
+      tram = parseInt(baso / 100 + '');
+      chuc = parseInt((baso % 100) / 10 + '');
+      donvi = baso % 10;
+      if (tram == 0 && chuc == 0 && donvi == 0) return "";
+      if (tram != 0) {
+        KetQua += ChuSo[tram] + " trăm ";
+        if ((chuc == 0) && (donvi != 0)) KetQua += " linh ";
+      }
+      if ((chuc != 0) && (chuc != 1)) {
+        KetQua += ChuSo[chuc] + " mươi";
+        if ((chuc == 0) && (donvi != 0)) KetQua = KetQua + " linh ";
+      }
+      if (chuc == 1) KetQua += " mười ";
+      switch (donvi) {
+        case 1:
+          if ((chuc != 0) && (chuc != 1)) {
+            KetQua += " mốt ";
+          }
+          else {
+            KetQua += ChuSo[donvi];
+          }
+          break;
+        case 5:
+          if (chuc == 0) {
+            KetQua += ChuSo[donvi];
+          }
+          else {
+            KetQua += " lăm ";
+          }
+          break;
+        default:
+          if (donvi != 0) {
+            KetQua += ChuSo[donvi];
+          }
+          break;
+      }
+      return KetQua;
+    }
+
+    function DocTienBangChu(SoTien) {
+      var lan = 0;
+      var i = 0;
+      var so = 0;
+      var KetQua = "";
+      var tmp = "";
+      var ViTri = new Array();
+      if (SoTien < 0) return "Số tiền âm !";
+      if (SoTien == 0) return "Không đồng !";
+      if (SoTien > 0) {
+        so = SoTien;
+      }
+      else {
+        so = -SoTien;
+      }
+      if (SoTien > 8999999999999999) {
+        //SoTien = 0;
+        return "Số quá lớn!";
+      }
+      ViTri[5] = Math.floor(so / 1000000000000000);
+      if (isNaN(ViTri[5]))
+        ViTri[5] = "0";
+      so = so - parseFloat(ViTri[5].toString()) * 1000000000000000;
+      ViTri[4] = Math.floor(so / 1000000000000);
+      if (isNaN(ViTri[4]))
+        ViTri[4] = "0";
+      so = so - parseFloat(ViTri[4].toString()) * 1000000000000;
+      ViTri[3] = Math.floor(so / 1000000000);
+      if (isNaN(ViTri[3]))
+        ViTri[3] = "0";
+      so = so - parseFloat(ViTri[3].toString()) * 1000000000;
+      ViTri[2] = parseInt(so / 1000000 + '');
+      if (isNaN(ViTri[2]))
+        ViTri[2] = "0";
+      ViTri[1] = parseInt((so % 1000000) / 1000 + '');
+      if (isNaN(ViTri[1]))
+        ViTri[1] = "0";
+      ViTri[0] = parseInt(so % 1000 + '');
+      if (isNaN(ViTri[0]))
+        ViTri[0] = "0";
+      if (ViTri[5] > 0) {
+        lan = 5;
+      }
+      else if (ViTri[4] > 0) {
+        lan = 4;
+      }
+      else if (ViTri[3] > 0) {
+        lan = 3;
+      }
+      else if (ViTri[2] > 0) {
+        lan = 2;
+      }
+      else if (ViTri[1] > 0) {
+        lan = 1;
+      }
+      else {
+        lan = 0;
+      }
+      for (i = lan; i >= 0; i--) {
+        tmp = DocSo3ChuSo(ViTri[i]);
+        KetQua += tmp;
+        if (ViTri[i] > 0) KetQua += Tien[i];
+        if ((i > 0) && (tmp.length > 0)) KetQua += ',';//&& (!string.IsNullOrEmpty(tmp))
+      }
+      if (KetQua.substring(KetQua.length - 1) == ',') {
+        KetQua = KetQua.substring(0, KetQua.length - 1);
+      }
+      KetQua = KetQua.substring(1, 2).toUpperCase() + KetQua.substring(2);
+      return KetQua.replace(/  /g, ' ') + ' đồng';//.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
+    }
+  </script>
+
+</head>
+
+<body style="width: 220px;  margin: 0 auto;font-size: 12px; padding: 0;" class="box1">
+  <div class="overlay" id="loader">
+    <i class="fa fa-refresh fa-spin"></i>
+  </div>
+  <div id="print-area">
+    <span style="font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    width: 100%;
+    display: block;">
+      <b>Nhien</b>Clothing</span>
+    <p style="text-align: center;
+    line-height: 150%;
+    padding-top: 10px;">
+      91 Võ Như Hưng, Khuê Mỹ, Ngũ Hành Sơn, Đà Nẵng
+      <br /> Hotline : 0932536995
+    </p>
+    <p style="font-size: 14px;text-align:center;
+    line-height: 22px;">HÓA ĐƠN THANH TOÁN</p>
+    <table class="table table-condensed">
+      <tr>
+        <td width="25%">Ngày</td>
+        <td width="25%" align="right" id="orderDate" style="padding-right: 20px;"></td>
+        <td width="25%">Giờ</td>
+        <td width="25%" align="right" id="orderHour"></td>
+      </tr>
+    </table>
+    <p style="font-size: 14px;
+    line-height: 30px;">CHI TIẾT</p>
+    <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 10px; margin-bottom: 0;">
+      <tbody></tbody>
+    </table>
+    <br />
+    <table class="table table-condensed" id="order-sum" style="width: 98%; margin-bottom: 10px;">
+      <tbody></tbody>
+    </table>
+    <p id="totalInText" style="font-style: italic; text-align: center;"></p>
+    <p style="font-size: 14px; text-align: center; padding-top: 15px;
+    line-height: 30px;">XIN CÁM ƠN - HẸN GẶP LẠI</p>
+    </div>
+    
+    <!-- Bootstrap 3.3.7 -->
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="/assets/plugins/iCheck/icheck.min.js"></script>
+    <script src="/assets/js/order-service.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        handleParam();
+      })
+      function handleParam() {
+        let id = '{{id}}';
+        if (id) {
+          OrderService.getById(id).then(function (order) {
+            if (order) {
+              loading(false);
+              generateOrderForm(order);
+              window.print();
+              window.location.href= '/';
+            }
+          })
+        } else {
+          window.location.href= '/';
+        }
+      }
+      function formatPrice(price) {
+        return formatter.format(price || 0);;
+      }
+      function generateOrderForm(order) {
+        $('#orderDate').html(order.orderDate);
+        $('#orderHour').html(order.orderHour);
+        $('#order-detail tbody').empty();
+        $('#order-detail tbody').append(`<tr>
+                  <th>TÊN</th>
+                  <th style="width: 20px; text-align: center;">SL</th>
+                  <th style="width: 40px; ">ĐG</th>
+                  <th style="width: 40px; ">T. TIỀN</th>
+                </tr>`);
+        if (order.orderDetail && order.orderDetail.length > 0) {
+          order.orderDetail.forEach(function (d) {
+            let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price).replace(' ₫', '')}</td><td>${formatPrice(d.total).replace(' ₫', '')}</td></tr>`
+            $('#order-detail tbody').append(tr);
+          })
+        }
+        $('#order-sum tbody').empty();
+
+        let trGrandPrice = `<tr>
+                  <td width="50%" style="font-size: 12px;">TIỀN MẶT</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.grandPrice)}</td>
+                </tr>`
+        $('#order-sum tbody').append(trGrandPrice);
+        if (order.discountPrice) {
+          $('#order-sum tbody').append(`<tr>
+                  <td width="50%" style="font-size: 12px;">GIẢM GIÁ</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.discountPrice)}</td>
+                </tr>`)
+          $('#order-sum tbody').append(`<tr>
+                  <td width="50%" style="font-size: 12px;">THÀNH TIỀN</td>
+                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.total)}</td>
+                </tr>`)
+        }
+
+        $('#totalInText').html(`(${order.totalInText})`);
+      }
+      function loading(status) {
+        status ? $('#loader').show() : $('#loader').hide();
+      }
+    </script>
+</body>
+
+</html>

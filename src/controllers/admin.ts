@@ -1,5 +1,6 @@
 import { Product } from "../models/schemas/productSchema";
 import { isAuthenticated } from "../lib/auth";
+import { Order } from "../models/schemas/orderSchema";
 
 const Router = require('express').Router();
 
@@ -10,6 +11,14 @@ Router.get('/', isAuthenticated, (req, res) => {
 });
 Router.get('/print-order', isAuthenticated, (req, res) => {
   res.render('printOrder');
+});
+Router.get('/print-order/:id', isAuthenticated, (req, res) => {
+  let id = req.params.id;
+  if (id) {
+    res.render('printOrder', {layout: false, id});
+  } else {
+    res.render('printOrder', {layout: false});
+  }
 });
 Router.get('/product', isAuthenticated, (req, res) => {
   res.render('product');
