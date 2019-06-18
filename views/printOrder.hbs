@@ -196,16 +196,26 @@
       return KetQua.replace(/  /g, ' ') + ' đồng';//.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
     }
   </script>
-
+  <style>
+    @page  
+    { 
+      size: auto; 
+      margin: 1mm 1mm 1mm 1mm;  
+    } 
+    body  
+    { 
+      margin: 0px;  
+    } 
+  </style>
 </head>
 
-<body style="width: 220px;  margin: 0 auto;font-size: 12px; padding: 0;" class="box1">
+<body style="width: 180px;  margin: 0 auto;font-size: 10px; padding-right: 20px;" class="box1">
   <div class="overlay" id="loader">
     <i class="fa fa-refresh fa-spin"></i>
   </div>
   <div id="print-area">
-    <span style="font-size: 24px;
-    line-height: 32px;
+    <span style="font-size: 20px;
+    line-height: 30px;
     text-align: center;
     font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
     font-weight: 300;
@@ -215,10 +225,10 @@
     <p style="text-align: center;
     line-height: 150%;
     padding-top: 10px;">
-      91 Võ Như Hưng, Khuê Mỹ, Ngũ Hành Sơn, Đà Nẵng
+      91 Võ Như Hưng, Đà Nẵng
       <br /> Hotline : 0932536995
     </p>
-    <p style="font-size: 14px;text-align:center;
+    <p style="font-size: 12px;text-align:center; font-weight: 600;
     line-height: 22px;">HÓA ĐƠN THANH TOÁN</p>
     <table class="table table-condensed">
       <tr>
@@ -228,9 +238,9 @@
         <td width="25%" align="right" id="orderHour"></td>
       </tr>
     </table>
-    <p style="font-size: 14px;
+    <p style="font-size: 12px; font-weight: 600;
     line-height: 30px;">CHI TIẾT</p>
-    <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 10px; margin-bottom: 0;">
+    <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 9px; margin-bottom: 0;">
       <tbody></tbody>
     </table>
     <br />
@@ -238,8 +248,9 @@
       <tbody></tbody>
     </table>
     <p id="totalInText" style="font-style: italic; text-align: center;"></p>
-    <p style="font-size: 14px; text-align: center; padding-top: 15px;
-    line-height: 30px;">XIN CÁM ƠN - HẸN GẶP LẠI</p>
+    <p style="text-align: center;padding-top: 20px;">Hàng đã mua không đổi trả<br /><br /> &starf;&starf;&starf;XIN CẢM ƠN&starf;&starf;&starf;</p>
+    <hr style="border-style: dashed;" />
+    <p style="text-align:center;">...</p>
     </div>
     
     <!-- Bootstrap 3.3.7 -->
@@ -275,7 +286,7 @@
         $('#order-detail tbody').empty();
         $('#order-detail tbody').append(`<tr>
                   <th>TÊN</th>
-                  <th style="width: 20px; text-align: center;">SL</th>
+                  <th style="width: 15px; text-align: center;">SL</th>
                   <th style="width: 40px; ">ĐG</th>
                   <th style="width: 40px; ">T. TIỀN</th>
                 </tr>`);
@@ -288,18 +299,18 @@
         $('#order-sum tbody').empty();
 
         let trGrandPrice = `<tr>
-                  <td width="50%" style="font-size: 12px;">TIỀN MẶT</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.grandPrice)}</td>
+                  <td width="50%" style="font-size: 11px;">TIỀN MẶT</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.grandPrice)}</td>
                 </tr>`
         $('#order-sum tbody').append(trGrandPrice);
         if (order.discountPrice) {
           $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 12px;">GIẢM GIÁ</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.discountPrice)}</td>
+                  <td width="50%" style="font-size: 11px;">GIẢM GIÁ</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.discountPrice)}</td>
                 </tr>`)
           $('#order-sum tbody').append(`<tr>
-                  <td width="50%" style="font-size: 12px;">THÀNH TIỀN</td>
-                  <td width="50%" style="font-size: 12px;" align="right">${formatPrice(order.total)}</td>
+                  <td width="50%" style="font-size: 11px;">THÀNH TIỀN</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.total)}</td>
                 </tr>`)
         }
 

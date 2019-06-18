@@ -1,6 +1,7 @@
 import { Users } from "../../../models/schemas/userSchema";
 
 const authenticationRouter = require('express').Router();
+const uuidv4  = require('uuid/v4');
 
 module.exports = authenticationRouter;
 
@@ -51,6 +52,7 @@ authenticationRouter.post('/', function(req, res, next) {
             details: 'Password is not matching',
           };
         global['currentUser'] = user.getCurrentUser();
+        res.cookie('access_token',JSON.stringify(user.getCurrentUser()), { maxAge: 604800, httpOnly: true });
         return res.json({ success: true, data: user.getCurrentUser() });
       })
       .catch(next);
