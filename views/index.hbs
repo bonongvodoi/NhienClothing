@@ -131,7 +131,7 @@
               <label for="note">Ghi chú cho đơn hàng: </label>
               <textarea class="form-control" id="note" maxlength="500" name="note" rows="3" placeholder="Nhập ghi chú"></textarea>
             </div>
-            <button type="button" id="btn-saveorder" class="btn btn-primary">Lưu &amp; In hóa đơn</button>
+            <button type="button" id="btn-saveorder" onclick="saveOrder()" class="btn btn-primary">Lưu &amp; In hóa đơn</button>
             {{!--
             <a type="button" href="/" class="btn btn-default">Hủy &amp; Tạo hóa đơn mới</a> --}}
           </div>
@@ -150,6 +150,7 @@
   var orderData;
   var tempData = [];
   var orderDiscount = 0;
+  var buttonClicked = false;
   $(document).ready(() => {
     $('#note').val('');
     orderData = {};
@@ -271,13 +272,16 @@
     }
 
     $('#totalInText').html(`(${order.totalInText})`);
-    $('#btn-saveorder').on('click', function () {
-      order.note = $('#note').val();
-      OrderService.saveOrder(order).then(function (data) {
-        if (!data || !data.serialNum) document.location.href = '/';
-        else document.location.href = '/print-order/' + data.serialNum;
-      })
-    });
+  }
+
+  function saveOrder() {
+    let order = orderData;
+    if (!order) return;
+    order.note = $('#note').val();
+    OrderService.saveOrder(order).then(function (data) {
+      if (!data || !data.serialNum) document.location.href = '/';
+      else document.location.href = '/print-order/' + data.serialNum;
+    })
   }
 
   function calMoreDiscount(order) {

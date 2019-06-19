@@ -57,6 +57,7 @@ function verifyRole(currentUser, url) {
     case 'salesman':
     if (url == '/') return true;
     if (url.startsWith('/print-order')) return true;
+    if (url.startsWith('/recent-order')) return true;
     return false;
     default:
     return false;    

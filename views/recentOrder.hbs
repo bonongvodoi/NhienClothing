@@ -1,0 +1,133 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Đơn hàng gần đây
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a href="#">
+          <i class="fa fa-dashboard"></i> Trang Bán Hàng</a>
+      </li>
+      <li class="active">Đơn Hàng Gần đây</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="box box-primary">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
+          <div class="box-header with-border">
+            <h3 class="box-title">Danh sách đơn hàng đã xuất gần đây</h3>
+            <br/>
+            <span style="font-size: 12px;">(Bấm vào biểu tượng IN
+              <i class="fa fa-print "></i> để in lại hóa đơn)</span>
+          </div>
+          <div class="box-body">
+            <div class="product-con">
+              <table id="order-table" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th width="150">Ngày &amp; Giờ</th>
+                    <th>Nội dung</th>
+                    <th width="120">Tổng tiền</th>
+                    <th width="150">Ghi chú</th>
+                    <th width="50"></th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<script src="/assets/js/order-service.js"></script>
+<script type="text/javascript">
+  var orderData;
+  $(document).ready(() => {
+    OrderService.getRecentOrder().then(data => {
+      setTimeout(function () {
+        loading(false);
+      }, 500);
+      if (!data || data.length == 0) {
+        orderData = [];
+      } else {
+        setupDatatable(data);
+      }
+    })
+  })
+
+  function setupDatatable(data) {
+    // map raw data and sort by create date
+    orderData = data.map(d => ({
+      dateTime: d.orderDate + ' - ' + d.orderHour,
+      description: generateDetail(d.orderDetail),
+      total: formatPrice(d.total),
+      note: d.note,
+      print: formatPrint(d.serialNum),
+      createdAt: d.createdAt
+    })).sort((a, b) => {
+      let d1 = new Date(a.createdAt);
+      let d2 = new Date(b.createdAt);
+      return d2.getTime() - d1.getTime();
+    });
+
+    //configure for datatable
+    var mainTable = $('#order-table').DataTable({
+      "data": orderData,
+      "columns": [
+        { "data": "dateTime", "searchable": false },
+        { "data": "description", "searchable": false },
+        { "data": "total", "className": "text-right", "searchable": false },
+        { "data": "note", "searchable": false },
+        { "data": "print", "searchable": false },
+      ],
+      'paging': false,
+      'lengthChange': false,
+      'searching': false,
+      'ordering': false,
+      'info': true,
+      'autoWidth': false,
+      'language': datatableLang,
+    });
+
+    //configure for search
+    $('#searchProduct').on('input', function () {
+      mainTable.search(this.value).draw();
+    });
+  }
+
+  function loading(status) {
+    status ? $('#loader').show() : $('#loader').hide();
+  }
+
+  function formatPrice(price) {
+    return formatter.format(price || 0);
+  }
+
+  function generateDetail(d) {
+    if (!d || d.length == 0) return;
+    let detail = '';
+    d.forEach(dt => {
+      detail += `<b>Tên:</b>${dt.name} &nbsp; <b>SL:</b>${dt.quantity} &nbsp; <b>ĐG</b>${formatPrice(dt.price)} &nbsp; <b>T Tiền</b>${formatPrice(dt.total)} | `;
+    })
+    detail = detail.substring(0, detail.length - 3);
+    return detail;
+  }
+
+  function formatPrint(id) {
+    return `<a class="btn btn-primary" href="/print-order/${id}"><i class="fa fa-print" aria-hidden="true"></i></a>`
+  }
+</script>

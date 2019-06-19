@@ -51,6 +51,9 @@ Router.get('/edit-campaign', isAuthenticated, (req, res) => {
 Router.get('/order', isAuthenticated, (req, res) => {
   res.render('order');
 });
+Router.get('/recent-order', isAuthenticated, (req, res) => {
+  res.render('recentOrder');
+});
 Router.get('/statistics-1', isAuthenticated, (req, res) => {
   res.render('statistics1');
 });

@@ -12,6 +12,22 @@ router.get('/all', function (req, res, next) {
   })
 });
 
+router.get('/recent', function (req, res, next) {
+
+  var start = new Date();
+  start.setHours(0, 0, 0, 0);
+
+  var end = new Date();
+  end.setHours(23, 59, 59, 999);
+
+  Order.find({'createdAt': {$gte: start, $lt: end}}).sort({ 'createdAt': -1 }).limit(10).then(orders => {
+    res.status(200).send({
+      success: true,
+      data: orders
+    });
+  })
+});
+
 router.post('/save-order', function (req, res, next) {
   let data = req.body.data;
   if (!data) {
