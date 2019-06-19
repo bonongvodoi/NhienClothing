@@ -8,7 +8,7 @@ const helpers = {
     return process.env.CDN_BASE_URL || '';
   },
   isProduction() {
-    return process.env.NODE_ENV == 'production';
+    return process.env.PORT == '5000';
   },
   if_eq(a, b, opts) {
     if (a == b) {
