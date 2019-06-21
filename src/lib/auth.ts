@@ -1,13 +1,13 @@
 import { Handler } from 'express';
 import * as config from '../config/config';
-import { AppError } from '../models/AppError';
+// import { AppError } from '../models/AppError';
 import { ROLE_ROUTE } from '../config/authRoute';
 const jwt = require('jsonwebtoken');
 
 export const authenticateUser: Handler = async (req, res, next) => {
   // check header or url parameters or post parameters for token
   //let token = req.body.token || req.query.token || req.headers['authorization'];
-  let token = req.cookies['access_token'];
+  let token = '';
 
   // decode token
   if (token) {
@@ -18,17 +18,17 @@ export const authenticateUser: Handler = async (req, res, next) => {
       return next();
     }
     catch (err) {
-      return next(err);
+      return res.status(401).send("No token provided");
     }
   } else {
-    return next(new AppError('No token provided', 401));
+    return res.status(401).send("No token provided");
   }
 };
 
 export function verifyToken(token: string) : Promise<{ id: string }> {
   return new Promise((resolve, reject) =>
     jwt.verify(token, config.secret, (err, user) => {
-      if (err) reject(new AppError('Invalid credentials, please log in first', 403, err));
+      if (err) reject(new Error('No token provided'));
       resolve(user);
     }));
 }
