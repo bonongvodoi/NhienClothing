@@ -1,53 +1,15 @@
-class ProductService {
-  static getAll() {
-    return new Promise(resolve => {
+class OrderService {
+  static saveOrder(data) {
+    return new Promise(( resolve,reject )=> {
       $.ajax({
-        url: '/api/product/all',
-        type: 'GET',
-        success: function (response) {
-          if (response.success) {
-            resolve(response.data);
-          } else {
-            resolve(null);
-          }
-        },
-        cache: false,
-        contentType: 'application/json',
-        processData: false
-      });     
-    })
-  }
-
-  static getById(id) {
-    return new Promise(resolve => {
-      $.ajax({
-        url: '/api/product/get/' + id,
-        type: 'GET',
-        success: function (response) {
-          if (response.success) {
-            resolve(response.data);
-          } else {
-            resolve(null);
-          }
-        },
-        cache: false,
-        contentType: 'application/json',
-        processData: false
-      });     
-    })
-  }
-
-  static saveProduct(data) {
-    return new Promise(resolve => {
-      $.ajax({
-        url: '/api/product/save-product',
+        url: '/api/order/save-order',
         type: 'POST',
         data:   JSON.stringify({data}),
         success: function (response) {
           if (response.success) {
             resolve(response.data);
           } else {
-            resolve(null);
+            reject(response.message);
           }
         },
         cache: false,
@@ -57,16 +19,54 @@ class ProductService {
     })
   }
 
-  static getCategories() {
-    return new Promise(resolve => {
+  static getById(id) {
+    return new Promise(( resolve,reject )=> {
       $.ajax({
-        url: '/api/product/get-categories',
+        url: '/api/order/get-order/' + id,
         type: 'GET',
         success: function (response) {
           if (response.success) {
             resolve(response.data);
           } else {
-            resolve(null);
+            reject(response.message);
+          }
+        },
+        cache: false,
+        contentType: 'application/json',
+        // processData: false
+      });     
+    })
+  }
+
+  static getRecentOrder() {
+    return new Promise(( resolve,reject )=> {
+      $.ajax({
+        url: '/api/order/recent',
+        type: 'GET',
+        success: function (response) {
+          if (response.success) {
+            resolve(response.data);
+          } else {
+            reject(response.message);
+          }
+        },
+        cache: false,
+        contentType: 'application/json',
+        // processData: false
+      });     
+    })
+  }
+
+  static getAll(id) {
+    return new Promise(( resolve,reject )=> {
+      $.ajax({
+        url: '/api/order/get-order/' + id,
+        type: 'GET',
+        success: function (response) {
+          if (response.success) {
+            resolve(response.data);
+          } else {
+            reject(response.message);
           }
         },
         cache: false,

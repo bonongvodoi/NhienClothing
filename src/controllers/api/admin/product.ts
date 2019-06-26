@@ -1,9 +1,9 @@
 import * as express from "express";
-import { Product } from "../../models/schemas/productSchema";
-import { Tag } from "../../models/schemas/tagSchema";
-import { Category } from "../../models/schemas/categorySchema";
-import { ProductFilterModel } from "../../models/productFilterModel";
-import { ProductPagingModel } from "../../models/productPagingModel";
+import { Product } from "../../../models/schemas/productSchema";
+import { Tag } from "../../../models/schemas/tagSchema";
+import { Category } from "../../../models/schemas/categorySchema";
+import { ProductFilterModel } from "../../../models/productFilterModel";
+import { ProductPagingModel } from "../../../models/productPagingModel";
 
 const router = express.Router();
 

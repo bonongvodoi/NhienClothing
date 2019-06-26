@@ -8,7 +8,7 @@
         <img src="/assets/img/nhien_ava.png" class="img-circle" alt="Nhien">
       </div>
       <div class="pull-left info">
-        <p>Nhiên Admin</p>
+        <p id="fullname"></p>
         <a href="#">
           <i class="fa fa-circle text-success"></i> Online</a>
       </div>
@@ -27,8 +27,8 @@
               <i class="fa fa-plus"></i> Tìm Sản Phẩm</a>
           </li>
           <li class="m-bh-2">
-            <a href="/print-order">
-              <i class="fa fa-plus"></i> In Hóa Đơn</a>
+            <a href="/recent-order">
+              <i class="fa fa-plus"></i> Hóa Đơn Gần Đây</a>
           </li>
         </ul>
       </li>
@@ -64,7 +64,7 @@
           </li>
         </ul>
       </li>
-      <li class="m-dh">
+      <li class="treeview m-dh">
         <a href="/order">
           <i class="fa fa-list"></i>
           <span>QUẢN LÝ ĐƠN HÀNG</span>
@@ -90,3 +90,13 @@
   </section>
   <!-- /.sidebar -->
 </aside>
+<script type="text/javascript">
+  (function () {
+    if (currentUser) {
+      $('#fullname').html(currentUser.firstName + ' ' + currentUser.lastName);
+      if (currentUser.role == 'salesman') {
+        $('li.treeview:not(:first)').hide();
+      }
+    }
+  })();
+</script>

@@ -3,15 +3,19 @@
       "module": "commonjs",
       "moduleResolution": "node",
       "pretty": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
       "sourceMap": true,
       "target": "es6",
       "outDir": "./dist",
-      "baseUrl": "./src"
+      "baseUrl": "./src",
+      "lib": ["dom", "es6"],
   },
   "include": [
       "src/**/*.ts"
   ],
   "exclude": [
-      "node_modules"
+      "node_modules", "dist", "server"
   ]
 }

@@ -1,0 +1,409 @@
+<style>
+  #product-table {
+    min-height: 100px;
+  }
+</style>
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Bán Hàng
+    </h1>
+    <ol class="breadcrumb">
+      <li class="active">
+        <i class="fa fa-dashboard"></i> Trang Bán Hàng</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="box box-primary" id="form-display">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
+          <div class="box-header with-border">
+            <span style="text-transform: uppercase;font-weight: bold;">1. Tìm sản phẩm &nbsp;</span>
+            <i class="fa fa-arrow-right"></i>
+            <span style="text-transform: uppercase;font-weight: bold;">2. Kiểm tra &amp; thêm vào hóa đơn &nbsp;</span>
+            <i class="fa fa-arrow-right"></i>
+            <span style="text-transform: uppercase;font-weight: bold;">3. In hóa đơn </span>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="product-con" style="min-height: auto;">
+              <div class="col-md-5" style="padding: 0;">
+                <div class="form-group">
+                  <label for="searchProduct" class="control-label">Tìm kiếm (theo Mã, Tên sản phẩm): </label>
+                  <input type="text" autofocus="true" class="form-control" id="searchProduct" placeholder="Tìm kiếm">
+                </div>
+              </div>
+              <table id="product-table" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th width="120">MÃ SẢN PHẨM</th>
+                    <th width="150">Tên sản phẩm</th>
+                    <th width="250">Mô tả</th>
+                    <th width="120">Giá sản phẩm</th>
+                    <th width="100">Số lượng</th>
+                    <th width="80"></th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <!-- general form elements -->
+        <div class="box box-primary" id="order-display" style="display: none;">
+          <div class="box-header with-border">
+            <h3 class="box-title">Thông tin hóa đơn</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="order-con" id="print-area" style="min-height: auto;width: 180px;
+    margin: 0 auto;
+    font-size: 10px; padding: 7px;    border: 1px dashed #cacaca;">
+              <span style="font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    width: 100%;
+    display: block;">
+                <b>Nhien</b>Clothing</span>
+              <p style="text-align: center;
+    line-height: 150%;
+    padding-top: 10px;">
+                91 Võ Như Hưng, Đà Nẵng
+                <br /> Hotline : 0932536995
+              </p>
+              <p style="font-size: 12px;text-align:center; font-weight: 600;
+    line-height: 22px;">HÓA ĐƠN THANH TOÁN</p>
+              <table class="table table-condensed">
+                <tr>
+                  <td width="25%">Ngày</td>
+                  <td width="25%" align="right" id="orderDate" style="padding-right: 20px;"></td>
+                  <td width="25%">Giờ</td>
+                  <td width="25%" align="right" id="orderHour"></td>
+                </tr>
+              </table>
+              <p style="font-size: 12px; font-weight: 600;
+    line-height: 30px;">CHI TIẾT</p>
+              <table class="table table-bordered table-condensed" id="order-detail" style="font-size: 9px; margin-bottom: 0;">
+                <tbody></tbody>
+              </table>
+              <br />
+              <table class="table table-condensed" id="order-sum" style="width: 98%; margin-bottom: 10px;">
+                <tbody></tbody>
+              </table>
+              <p id="totalInText" style="font-style: italic; text-align: center;"></p>
+              <p style="text-align: center;padding-top: 20px;">Hàng đã mua không đổi trả
+                <br />
+                <br /> &starf;&starf;&starf;XIN CẢM ƠN&starf;&starf;&starf;</p>
+              <hr style="border-style: dashed;" />
+              <p style="text-align:center;">...</p>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            <div class="form-group">
+              <label for="price-display">Giảm giá thêm cho đơn hàng (nếu có)
+              </label>
+              <div class="input-group price">
+                <input autocomplete="off" type="text" maxlength="7" id="price-display" name="price-display" class="form-control">
+                <span class="input-group-addon">000</span>
+              </div>
+              <span class="format-price"></span>
+              <input type="hidden" id="price" name="price" value="0">
+            </div>
+            <div class="form-group">
+              <label for="note">Ghi chú cho đơn hàng: </label>
+              <textarea class="form-control" id="note" maxlength="500" name="note" rows="3" placeholder="Nhập ghi chú"></textarea>
+            </div>
+            <button type="button" id="btn-saveorder" onclick="saveOrder()" class="btn btn-primary">Lưu &amp; In hóa đơn</button>
+            {{!--
+            <a type="button" href="/" class="btn btn-default">Hủy &amp; Tạo hóa đơn mới</a> --}}
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<script src="/assets/js/product-service.js"></script>
+<script src="/assets/js/campaign-service.js"></script>
+<script src="/assets/js/order-service.js"></script>
+<script type="text/javascript">
+  var productData;
+  var orderData;
+  var tempData = [];
+  var orderDiscount = 0;
+  var buttonClicked = false;
+  $(document).ready(() => {
+    $('#note').val('');
+    orderData = {};
+    tempData = [];
+    ProductService.getAll().then(data => {
+      setTimeout(function () {
+        loading(false);
+      }, 500);
+      if (!data || data.length == 0) {
+        productData = [];
+      } else {
+        setupDatatable(data);
+      }
+    })
+
+    // setup price onchange
+    $('#price-display').on('input', function () {
+      let val = $(this).val();
+      if (val && !isNaN(val)) {
+        let price = parseInt(val) * 1000;
+        $('.format-price').html(formatter.format(price));
+        $('#price').val(price);
+      } else {
+        $('.format-price').html(null);
+        $('#price').val(0);
+      }
+      calMoreDiscount(orderData);
+    });
+  })
+
+  function addToTemp(e, id) {
+    let q = 1;
+    if (!isNaN(parseInt(e.target.value))) {
+      q = parseInt(e.target.value);
+    }
+    let tempE = tempData.filter(t => t.id == id)[0];
+    if (tempE) {
+      tempE.quantity = q;
+    } else {
+      tempData.push({ id, quantity: q });
+    }
+  }
+
+  function addToOrder(id, name, price) {
+    let q = 1;
+    let tempE = tempData.filter(t => t.id == id)[0];
+    if (tempE) {
+      q = tempE.quantity || 1;
+    }
+    if (!orderData.orderDetail) {
+      orderData.orderDetail = []
+    }
+    getDateNow(orderData);
+    if (currentUser) {
+      orderData.byWho = currentUser.firstName + ' ' + currentUser.lastName;
+    }
+    let detail = orderData.orderDetail;
+    let detailE = detail.filter(t => t.productId == id)[0];
+    if (detailE) {
+      detailE.quantity = detailE.quantity + q;
+      detailE.total = detailE.quantity * detailE.price;
+    } else {
+      detailE = {
+        productId: id,
+        name,
+        quantity: q,
+        price,
+        total: q * price,
+      }
+      orderData.orderDetail.push(detailE);
+    }
+
+    calGrandPrice(orderData);
+    CampaignService.getCampaignForOrder(orderData.total).then(c => {
+      if (c) {
+        calGrandPrice(orderData, c.discount_value);
+      }
+      orderData.totalInText = DocTienBangChu(orderData.total);
+      $('#order-display').show();
+      calMoreDiscount(orderData);
+    });
+    $('#searchProduct').val('');
+    $('#searchProduct').trigger('input');
+    $('#searchProduct').focus();
+  }
+
+  function generateOrderForm(order) {
+    $('#orderDate').html(order.orderDate);
+    $('#orderHour').html(order.orderHour);
+    $('#order-detail tbody').empty();
+    $('#order-detail tbody').append(`<tr>
+                  <th>TÊN</th>
+                  <th style="width: 15px; text-align: center;">SL</th>
+                  <th style="width: 40px; ">ĐG</th>
+                  <th style="width: 40px; ">T. TIỀN</th>
+                </tr>`);
+    if (order.orderDetail && order.orderDetail.length > 0) {
+      order.orderDetail.forEach(function (d) {
+        let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price).replace(' ₫', '')}</td><td>${formatPrice(d.total).replace(' ₫', '')}</td></tr>`
+        $('#order-detail tbody').append(tr);
+      })
+    }
+    $('#order-sum tbody').empty();
+
+    let trGrandPrice = `<tr>
+                  <td width="50%" style="font-size: 11px;">TIỀN MẶT</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.grandPrice)}</td>
+                </tr>`
+    $('#order-sum tbody').append(trGrandPrice);
+    if (order.discountPrice) {
+      $('#order-sum tbody').append(`<tr>
+                  <td width="50%" style="font-size: 11px;">GIẢM GIÁ</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.discountPrice)}</td>
+                </tr>`)
+      $('#order-sum tbody').append(`<tr>
+                  <td width="50%" style="font-size: 11px;">THÀNH TIỀN</td>
+                  <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.total)}</td>
+                </tr>`)
+    }
+
+    $('#totalInText').html(`(${order.totalInText})`);
+  }
+
+  function saveOrder() {
+    let order = orderData;
+    if (!order) return;
+    order.note = $('#note').val();
+    OrderService.saveOrder(order).then(function (data) {
+      if (!data || !data.serialNum) document.location.href = '/';
+      else document.location.href = '/print-order/' + data.serialNum;
+    })
+  }
+
+  function calMoreDiscount(order) {
+    if (!order) return;
+    let moreDiscount = !isNaN(parseInt($('#price').val())) ? parseInt($('#price').val()) : 0
+    if (moreDiscount) {
+      order.discountPrice = orderDiscount + moreDiscount;
+    } else {
+      order.discountPrice = orderDiscount;
+    }
+    order.total = order.grandPrice - order.discountPrice;
+    if (order.total < 0) order.total = 0;
+    order.totalInText = DocTienBangChu(orderData.total);
+    generateOrderForm(order);
+  }
+
+  function setupDatatable(data) {
+    // map raw data and sort by create date
+    productData = data.map(d => ({
+      hiddenId: d.serialNum,
+      id: formatId(d.serialNum),
+      name: d.name,
+      description: d.description,
+      price: formatPrice(d.price, d.discounted_price),
+      quantity: formatQuantity(d.serialNum),
+      action: formatAction(d.serialNum, d.name, d.price),
+      //discounted_price: formatPrice(d.discounted_price),
+      //campaign: formatCampaign(d.campaign),
+      createdAt: d.createdAt
+    })).sort((a, b) => {
+      let d1 = new Date(a.createdAt);
+      let d2 = new Date(b.createdAt);
+      return d2.getTime() - d1.getTime();
+    });
+
+    //configure for datatable
+    var mainTable = $('#product-table').DataTable({
+      "data": productData,
+      "columns": [
+        { "data": "id", "className": "text-center" },
+        { "data": "name" },
+        { "data": "description", "searchable": false },
+        { "data": "price", "className": "text-right", "searchable": false },
+        { "data": "quantity", "searchable": false, "className": "text-center" },
+        { "data": "action", "searchable": false, "className": "text-center" },
+      ],
+      'paging': false,
+      'lengthChange': false,
+      'searching': true,
+      'ordering': false,
+      'info': true,
+      'autoWidth': false,
+      'language': { ...datatableLang, emptyTable: "", zeroRecords: "", info: "", infoEmpty: "" },
+    });
+    mainTable.clear();
+    mainTable.draw();
+    //configure for search
+    $('#searchProduct').on('input', function () {
+      if (!this.value || this.value.length <= 3) {
+        mainTable.clear();
+        mainTable.draw();
+      } else {
+        mainTable.clear();
+        mainTable.rows.add(productData);
+        mainTable.search(this.value).draw();
+        $('.product-quantity').on('input', function () {
+          if (!isNaN(parseInt(this.value))) {
+            var a = parseInt(this.value);
+            if (a < 1 || a > 100) $(this).val(1)
+          }
+        })
+        $('.product-quantity').on('blur', function () {
+          if (isNaN(parseInt(this.value))) {
+            $(this).val(1)
+          }
+        })
+      }
+    });
+  }
+
+  function loading(status) {
+    status ? $('#loader').show() : $('#loader').hide();
+  }
+  function formatId(id) {
+    return `<span class="badge bg-red medium c-pointer">${id}</span>`
+  }
+  function formatPrice(price, discounted_price) {
+    if (!discounted_price) {
+      let format = formatter.format(price || 0);
+      return format
+    }
+    return `(<span class="text-strike">${formatter.format(price || 0)}</span>)<br><span>${formatter.format(discounted_price || 0)}</span>`
+  }
+  function formatQuantity(id) {
+    return `<input type="number" value="1" name="quantity" onblur="addToTemp(event, ${id})" class="product-quantity" />`
+  }
+  function formatAction(id, name, price) {
+    return `<button class="btn btn-primary add-order" onclick="addToOrder(${id}, '${name}', ${price})"><i class="fa fa-plus-square" aria-hidden="true"></i></button>`
+  }
+
+  function getDateNow(order) {
+    var d = new Date();
+    order.orderDate = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+    order.orderHour = d.getHours() + ':' + d.getMinutes();
+  }
+
+  function calGrandPrice(order, discount) {
+    if (!order.orderDetail || order.orderDetail.length == 0) {
+      order.grandPrice = 0;
+      order.total = 0;
+      return;
+    }
+    order.grandPrice = order.orderDetail.reduce((a, b) => a + (b['total'] || 0), 0);
+    if (discount && discount < 1 && discount > 0)
+      order.discountPrice = roundThousand(order.grandPrice * discount);
+    else
+      order.discountPrice = 0;
+    orderDiscount = order.discountPrice;
+    order.total = order.grandPrice - order.discountPrice;
+    if (order.total < 0) order.total = 0;
+  }
+  function roundThousand(num) {
+    return Math.round((num + 0.00001) * 0.001) / 0.001;
+  }
+</script>

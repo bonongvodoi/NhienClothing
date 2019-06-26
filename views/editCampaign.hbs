@@ -1,0 +1,272 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Thêm / Chỉnh Sửa Khuyến Mãi
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a href="/">
+          <i class="fa fa-dashboard"></i> Trang Bán Hàng</a>
+      </li>
+      <li class="active">Thêm / Chỉnh Sửa Khuyến Mãi</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <!-- general form elements -->
+        <div class="box box-primary" id="form-display">
+          <div class="overlay" id="loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </div>
+          <div class="box-header with-border">
+            <h3 class="box-title">Nhập thông tin CT Khuyến mãi bên dưới</h3>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form role="form" id="campaignForm" name="campaignForm" method="POST" autocomplete="off">
+            <input type="hidden" value="0" id="id" name="id">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="name">Tên CT Khuyến mãi
+                  <span class="red">*</span>
+                </label>
+                <input type="text" class="form-control" maxlength="100" id="name" name="name" placeholder="Nhập tên sản phẩm">
+              </div>
+              <div class="form-group">
+                <label for="description">Mô tả</label>
+                <textarea class="form-control" id="description" maxlength="500" name="description" rows="3" placeholder="Nhập mô tả"></textarea>
+              </div>
+              <div class="form-group pos-relative">
+                <label>Trạng Thái</label>
+                <input type="hidden" id="status" name="status" value="active">
+                <div class="group-pick status">
+                  <div data-value="active" class="select">Hoạt động</div>
+                  <div data-value="inactive">Đóng</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Loại khuyến mãi</label>
+                <input type="hidden" id="type" name="type" value="order_discount">
+                <div class="group-pick type">
+                  <div data-value="order_discount" class="select">Giảm giá trên tổng đơn hàng</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="order_min_value-display">Giá trị đơn hàng tối thiểu
+                  <span class="red">*</span>
+                </label>
+                <div class="input-group price">
+                  <input type="text" maxlength="7" id="order_min_value-display" name="order_min_value-display" class="form-control">
+                  <span class="input-group-addon">000</span>
+                </div>
+                <span class="format-price"></span>
+                <input type="hidden" id="order_min_value" name="order_min_value" value="0">
+              </div>
+              <div class="form-group">
+                <label for="discount_value">Mức giảm giá (%)
+                  <span class="red">*</span>
+                </label>
+                <div class="input-group price">
+                  <input type="text" maxlength="7" id="discount_value" name="discount_value" class="form-control">
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+
+            <div class="box-footer">
+              <button type="submit" id="bnt-save" class="btn btn-primary">Lưu CT Khuyến mãi</button>
+              <button type="button" id="bnt-reset" class="btn btn-danger">Nhập lại</button>
+            </div>
+          </form>
+        </div>
+        <div class="box box-primary" id="info-display" style="display: none;">
+          <div class="box-header with-border">
+            <h3 class="box-title">Thông báo</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            Lưu chương trình khuyến mãi thành công<br />
+            Bạn muốn làm gì tiếp theo?
+          </div>
+          <div class="box-footer">
+            <button type="button" id="btn-addnew" class="btn btn-primary">Tạo CT Khuyến mãi khác</button>
+            <button type="button" id="btn-back" class="btn btn-default">Về trang quản lý CT Khuyến mãi</button>
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<script src="/assets/js/campaign-service.js"></script>
+<script type="text/javascript">
+  var recentId = '';
+
+  $(document).ready(() => {
+    // hander params id 
+    handleParam()
+
+    // hander product form
+    handleForm();
+
+    // setup size pick
+    $('.group-pick.status div').each(function () {
+      $(this).on('click', function () {
+        $('.group-pick.status div').removeClass('select');
+        let value = $(this).attr('data-value');
+        $(this).addClass('select');
+        $('#status').val(value);
+      })
+    })
+    // setup price onchange
+    $('#order_min_value-display').on('input', function () {
+      let val = $(this).val();
+      if (val && !isNaN(val)) {
+        let price = parseInt(val) * 1000;
+        $('.format-price').html(formatter.format(price));
+        $('#order_min_value').val(price);
+      } else {
+        $('.format-price').html(null);
+        $('#order_min_value').val(0);
+      }
+    });
+
+    function handleForm() {
+      $('#bnt-reset').click(function () {
+        resetForm($("#campaignForm"));
+      });
+      $('#btn-addnew').click(function () {
+        document.location.href = '/edit-campaign';
+      })
+      $('#btn-back').click(function () {
+        document.location.href = '/campaign';
+      })
+
+      $("#campaignForm").submit(function (e) {
+        const form = this;
+        e.preventDefault();
+        let data = getFormData($(form));
+        if ($(form).valid()) {
+          $('#bnt-save').attr('disabled', true);
+          $('#bnt-reset').attr('disabled', true);
+          $('#bnt-save').text('Đang Lưu...');
+          CampaignService.saveCampaign(data).then(saveCamp => {
+            $('#bnt-save').attr('disabled', false);
+            $('#bnt-reset').attr('disabled', false);
+            $('#bnt-save').text('Lưu CT Khuyến mãi');
+            if (saveCamp) {
+              recentId = saveCamp.serialNum;
+              toggleInfo(true);
+            } else {
+              $('#modal-default-1').find('.modal-body p').html('Lưu CT Khuyến mãi không thành công, tải lại trang và thực hiện lại');
+              $('#modal-default-1').modal('show');
+            }
+          })
+        }
+      });
+      $("#campaignForm").validate({
+        rules: {
+          name: {
+            required: true
+          },
+          category: {
+            required: true
+          },
+          "order_min_value-display": {
+            required: true,
+            number: true
+          },
+          "discount_value": {
+            required: true,
+            number: true
+          }
+        },
+        messages: {
+          name: "Hãy nhập tên CT Khuyến mãi",
+          "order_min_value-display": {
+            required: "Hãy nhập giá trị đơn hàng tối hiểu",
+            number: "Giá trị đơn hàng tối hiểu không đúng",
+          },
+          "discount_value": {
+            required: "Hãy nhập mức giảm giá (%)",
+            number: "Mức giảm giá không đúng",
+          }
+        },
+        errorPlacement: function (error, element) {
+          if (element.parent().hasClass('input-group')) {
+            error.appendTo(element.parent().parent());
+          } else {
+            error.appendTo(element.parent());
+          }
+        },
+      });
+    }
+
+    function resetForm($form) {
+      $form.trigger('reset');
+      $('.format-price').html(null);
+      $('#name').focus();
+    }
+
+    function toggleInfo(status) {
+      if (status) {
+        $('#form-display').hide();
+        $('#info-display').show();
+      } else {
+        $('#form-display').show();
+        $('#info-display').hide();
+      }
+    }
+
+    function handleParam() {
+      let id = '{{id}}';
+      if (id) {
+        CampaignService.getById(id).then(function (data) {
+          $('#loader').hide();
+          if (!data || !data.campaign) return;
+          let camp = data.campaign;
+          $('#id').val(parseInt(camp.serialNum) || 0);
+          $('#name').val(camp.name);
+          $('#description').val(camp.description);
+          mapStatusToPicker(camp.status);
+          if (camp.order_min_value)
+            mapMinPriceToDisplay(camp.order_min_value);          
+          $('#discount_value').val(camp.discount_value * 100);     
+        }).catch(function () {
+          $('#loader').hide();
+          $('#bnt-save').attr('disabled', false);
+          $('#bnt-reset').attr('disabled', false);
+          $('#bnt-save').text('Lưu CT Khuyến mãi');
+        })
+      } else {
+        $('#loader').hide();
+      }
+    }
+
+    function mapStatusToPicker(status) {
+      if ($(`.group-pick.status div[data-value="${status}"]`).length == 0) {
+        triggerEvent($(`.group-pick.status div[data-value="active"]`), 'click');
+      } else {
+        triggerEvent($(`.group-pick.status div[data-value="${status}"]`), 'click');
+      }
+    }
+
+    function mapMinPriceToDisplay(price) {
+      let priceDisplay = Math.round(price / 1000);
+      $('#order_min_value-display').val(priceDisplay);
+      triggerEvent($('#order_min_value-display'), 'input');
+    }
+
+    function triggerEvent($ele, event) {
+      setTimeout(function () {
+        $ele.trigger(event);
+      }, 100);
+    }
+  })
+</script>

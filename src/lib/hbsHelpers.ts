@@ -8,10 +8,7 @@ const helpers = {
     return process.env.CDN_BASE_URL || '';
   },
   isProduction() {
-    return process.env.NODE_ENV == 'production';
-  },
-  intercomAppId() {
-    return process.env.NODE_ENV === 'production' ? 'vvoaryvw' : 'ip5kpw3p';
+    return process.env.PORT == '5000';
   },
   if_eq(a, b, opts) {
     if (a == b) {

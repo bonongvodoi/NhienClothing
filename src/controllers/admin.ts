@@ -1,49 +1,63 @@
 import { Product } from "../models/schemas/productSchema";
+import { isAuthenticated } from "../lib/auth";
+import { Order } from "../models/schemas/orderSchema";
 
 const Router = require('express').Router();
 
 const CACHE_EXPIRY = 3600;
 
-Router.get('/', (req, res) => {
+Router.get('/', isAuthenticated, (req, res) => {
   res.render('index');
 });
-Router.get('/print-order', (req, res) => {
+Router.get('/print-order', isAuthenticated, (req, res) => {
   res.render('printOrder');
 });
-Router.get('/product', (req, res) => {
-  res.render('product');
-});
-Router.get('/edit-product', (req, res) => {
-  res.render('editProduct');
-});
-Router.get('/edit-product/:id', (req, res) => {
+Router.get('/print-order/:id', isAuthenticated, (req, res) => {
   let id = req.params.id;
   if (id) {
-    let query = buildQuery(id);
-    Product.findOne(query).then(_product => {
-      let product = _product;
-      res.render('editProduct', product);
-      return;
-    }).catch(() => {
-      res.render('editProduct', {});
-    })
+    res.render('printOrder', {layout: false, id});
+  } else {
+    res.render('printOrder', {layout: false});
+  }
+});
+Router.get('/product', isAuthenticated, (req, res) => {
+  res.render('product');
+});
+Router.get('/edit-product', isAuthenticated, (req, res) => {
+  res.render('editProduct');
+});
+Router.get('/edit-product/:id', isAuthenticated, (req, res) => {
+  let id = req.params.id;
+  if (id) {
+    res.render('editProduct', {id});
   } else {
     res.render('editProduct', {});
   }  
 });
-Router.get('/campaign', (req, res) => {
+Router.get('/campaign', isAuthenticated, (req, res) => {
   res.render('campaign');
 });
-Router.get('/edit-campaign', (req, res) => {
+Router.get('/edit-campaign/:id', isAuthenticated, (req, res) => {
+  let id = req.params.id;
+  if (id) {
+    res.render('editCampaign', {id});
+  } else {
+    res.render('editCampaign');
+  }    
+});
+Router.get('/edit-campaign', isAuthenticated, (req, res) => {
   res.render('editCampaign');
 });
-Router.get('/order', (req, res) => {
+Router.get('/order', isAuthenticated, (req, res) => {
   res.render('order');
 });
-Router.get('/statistics-1', (req, res) => {
+Router.get('/recent-order', isAuthenticated, (req, res) => {
+  res.render('recentOrder');
+});
+Router.get('/statistics-1', isAuthenticated, (req, res) => {
   res.render('statistics1');
 });
-Router.get('/statistics-2', (req, res) => {
+Router.get('/statistics-2', isAuthenticated, (req, res) => {
   res.render('statistics2');
 });
 function buildQuery(id) {
