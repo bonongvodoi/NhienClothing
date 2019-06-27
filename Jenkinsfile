@@ -9,9 +9,9 @@ pipeline {
         CI = 'true' 
     }
     stages {
-        stage('Build') {
+        stage('deploy-prod') {
             steps {
-                sh 'npm install'
+                sh 'npm run prod'
             }
         }
         stage('Test') { 
