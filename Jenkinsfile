@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('deploy-prod') {
             steps {
-                 echo 'Hello world!' 
+                 sh 'npm run prod' 
             }
         }        
     }
