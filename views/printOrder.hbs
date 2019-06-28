@@ -7,26 +7,34 @@
   <title>Nhiên Shop - Trang Quản Lý</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
+    crossorigin="anonymous" />
   <!-- Ionicons -->
-  <link rel="stylesheet" href="/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" integrity="sha256-kx16nUTlNRyEpdk7cvpnqblbDbTe/nADul9o2uYeGSw="
+    crossorigin="anonymous" />
   <!-- Theme style -->
   <link rel="stylesheet" href="/assets/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/assets/css/skins/_all-skins.min.css">
   <!-- Morris chart -->
-  <link rel="stylesheet" href="/morris.js/morris.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" integrity="sha256-szHusaozbQctTn4FX+3l5E0A5zoxz7+ne4fr8NgWJlw="
+    crossorigin="anonymous" />
   <!-- jvectormap -->
-  <link rel="stylesheet" href="/jvectormap/jquery-jvectormap.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jvectormap/2.0.4/jquery-jvectormap.css" integrity="sha256-WcPUFJIn+E4qpoLOoHNL/lp/mRs8gIIPrJiGW/Izcds="
+    crossorigin="anonymous" />
   <!-- Date Picker -->
-  <link rel="stylesheet" href="/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+    integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
   <!-- Daterange picker -->
-  <link rel="stylesheet" href="/bootstrap-daterangepicker/daterangepicker.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css"
+    integrity="sha256-9e9MfmRHWQmp4yMV+R9cxXU6+ZjzB2x+YcE4Z1Kmuag=" crossorigin="anonymous" />
   <!-- bootstrap wysihtml5 - text editor -->
-  <link rel="stylesheet" href="/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-wysiwyg/0.3.3/bootstrap3-wysihtml5.min.css"
+    integrity="sha256-Qo9dfxjSvWBpcONv1klYEjbmw13NfsOC+oARxiq49/A=" crossorigin="anonymous" />
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -44,7 +52,8 @@
 
   <script src="/assets/js/auth-service.js"></script>
   <!-- jQuery 3 -->
-    <script src="/jquery/dist/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
   <script type="text/javascript">
     var currentUser = AuthService.getCurrentUser() || '';
     $.ajaxSetup({
@@ -197,15 +206,14 @@
     }
   </script>
   <style>
-    @page  
-    { 
-      size: auto; 
-      margin: 1mm 1mm 1mm 1mm;  
-    } 
-    body  
-    { 
-      margin: 0px;  
-    } 
+    @page {
+      size: auto;
+      margin: 1mm 1mm 1mm 1mm;
+    }
+
+    body {
+      margin: 0px;
+    }
   </style>
 </head>
 
@@ -248,78 +256,81 @@
       <tbody></tbody>
     </table>
     <p id="totalInText" style="font-style: italic; text-align: center;"></p>
-    <p style="text-align: center;padding-top: 20px;">Hàng đã mua không đổi trả<br /><br /> &starf;&starf;&starf;XIN CẢM ƠN&starf;&starf;&starf;</p>
+    <p style="text-align: center;padding-top: 20px;">Hàng đã mua không đổi trả
+      <br />
+      <br /> &starf;&starf;&starf;XIN CẢM ƠN&starf;&starf;&starf;</p>
     <hr style="border-style: dashed;" />
     <p style="text-align:center;">...</p>
-    </div>
-    
-    <!-- Bootstrap 3.3.7 -->
-    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- iCheck -->
-    <script src="/assets/plugins/iCheck/icheck.min.js"></script>
-    <script src="/assets/js/order-service.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        handleParam();
-      })
-      function handleParam() {
-        let id = '{{id}}';
-        if (id) {
-          OrderService.getById(id).then(function (order) {
-            if (order) {
-              loading(false);
-              generateOrderForm(order);
-              window.print();
-              window.location.href= '/';
-            }
-          })
-        } else {
-          window.location.href= '/';
-        }
+  </div>
+
+  <!-- Bootstrap 3.3.7 -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <!-- iCheck -->
+  <script src="/assets/plugins/iCheck/icheck.min.js"></script>
+  <script src="/assets/js/order-service.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      handleParam();
+    })
+    function handleParam() {
+      let id = '{{id}}';
+      if (id) {
+        OrderService.getById(id).then(function (order) {
+          if (order) {
+            loading(false);
+            generateOrderForm(order);
+            window.print();
+            window.location.href = '/';
+          }
+        })
+      } else {
+        window.location.href = '/';
       }
-      function formatPrice(price) {
-        return formatter.format(price || 0);;
-      }
-      function generateOrderForm(order) {
-        $('#orderDate').html(order.orderDate);
-        $('#orderHour').html(order.orderHour);
-        $('#order-detail tbody').empty();
-        $('#order-detail tbody').append(`<tr>
+    }
+    function formatPrice(price) {
+      return formatter.format(price || 0);;
+    }
+    function generateOrderForm(order) {
+      $('#orderDate').html(order.orderDate);
+      $('#orderHour').html(order.orderHour);
+      $('#order-detail tbody').empty();
+      $('#order-detail tbody').append(`<tr>
                   <th>TÊN</th>
                   <th style="width: 15px; text-align: center;">SL</th>
                   <th style="width: 40px; ">ĐG</th>
                   <th style="width: 40px; ">T. TIỀN</th>
                 </tr>`);
-        if (order.orderDetail && order.orderDetail.length > 0) {
-          order.orderDetail.forEach(function (d) {
-            let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price).replace(' ₫', '')}</td><td>${formatPrice(d.total).replace(' ₫', '')}</td></tr>`
-            $('#order-detail tbody').append(tr);
-          })
-        }
-        $('#order-sum tbody').empty();
+      if (order.orderDetail && order.orderDetail.length > 0) {
+        order.orderDetail.forEach(function (d) {
+          let tr = `<tr><td>${d.name}</td><td>${d.quantity}</td><td>${formatPrice(d.price).replace(' ₫', '')}</td><td>${formatPrice(d.total).replace(' ₫', '')}</td></tr>`
+          $('#order-detail tbody').append(tr);
+        })
+      }
+      $('#order-sum tbody').empty();
 
-        let trGrandPrice = `<tr>
+      let trGrandPrice = `<tr>
                   <td width="50%" style="font-size: 11px;">TIỀN MẶT</td>
                   <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.grandPrice)}</td>
                 </tr>`
-        $('#order-sum tbody').append(trGrandPrice);
-        if (order.discountPrice) {
-          $('#order-sum tbody').append(`<tr>
+      $('#order-sum tbody').append(trGrandPrice);
+      if (order.discountPrice) {
+        $('#order-sum tbody').append(`<tr>
                   <td width="50%" style="font-size: 11px;">GIẢM GIÁ</td>
                   <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.discountPrice)}</td>
                 </tr>`)
-          $('#order-sum tbody').append(`<tr>
+        $('#order-sum tbody').append(`<tr>
                   <td width="50%" style="font-size: 11px;">THÀNH TIỀN</td>
                   <td width="50%" style="font-size: 11px;" align="right">${formatPrice(order.total)}</td>
                 </tr>`)
-        }
+      }
 
-        $('#totalInText').html(`(${order.totalInText})`);
-      }
-      function loading(status) {
-        status ? $('#loader').show() : $('#loader').hide();
-      }
-    </script>
+      $('#totalInText').html(`(${order.totalInText})`);
+    }
+    function loading(status) {
+      status ? $('#loader').show() : $('#loader').hide();
+    }
+  </script>
 </body>
 
 </html>
