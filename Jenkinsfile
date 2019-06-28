@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('deploy-prod') {
             steps {
-                 sh 'npm run prod' 
+                 sh 'npm install'
+                 sh '\node_modules\.bin\pm2 list all'
             }
         }        
     }
